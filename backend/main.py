@@ -1,12 +1,24 @@
 from fastapi import FastAPI
 
-app = FastAPI()
+from backend.config import APP_NAME, VERSION
+
+
+app = FastAPI(
+    title=APP_NAME,
+    version=VERSION,
+)
 
 
 @app.get("/")
 def root():
     return {
-        "name": "Chimera",
+        "name": APP_NAME,
         "status": "online",
-        "version": "0.1.0"
+        "version": VERSION,
+    }
+
+@app.get("/health")
+def health():
+    return {
+        "status": "healthy"
     }
