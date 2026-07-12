@@ -10,4 +10,4 @@ PORT = 8000
 
 DEBUG = True
 
-MODEL_NAME = "qwen3:8b"
+MODEL_NAME = "qwen3:4b"
