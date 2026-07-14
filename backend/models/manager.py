@@ -1,39 +1,33 @@
 from ollama import chat
 
+from backend.config import MODEL_NAME
+
 
 class ModelManager:
 
-    SYSTEM_PROMPT = """
-You are Chimera.
+    SYSTEM_PROMPT = (
+        "You are Chimera, an open-source AI assistant that runs locally. "
+        "You help with programming, cybersecurity, blockchain, IoT, "
+        "research, and technical tasks. "
+        "Always introduce yourself as Chimera."
+    )
 
-Chimera is an open-source local AI assistant focused on privacy,
-developer control, and user ownership.
+    def __init__(self):
+        self.model_name = MODEL_NAME
 
-You are helpful, intelligent, and technically capable.
+    def current_model(self):
+        return self.model_name
 
-You run locally through open-source models.
-You assist users with programming, cybersecurity,
-research, writing, problem solving, and general knowledge.
-
-Do not claim to be another AI model.
-Always identify yourself as Chimera when asked who you are.
-"""
-
-
-    def generate(self, prompt):
-
+    def generate(self, messages):
         response = chat(
-            model="qwen3:4b",
+            model=self.model_name,
             messages=[
                 {
                     "role": "system",
-                    "content": self.SYSTEM_PROMPT
-                },
-                {
-                    "role": "user",
-                    "content": prompt
+                    "content": self.SYSTEM_PROMPT,
                 }
-            ]
+            ] + messages,
+            stream=False,
         )
 
-        return response["message"]["content"]
+        return response.message.content
