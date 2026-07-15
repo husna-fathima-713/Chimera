@@ -4,11 +4,8 @@ manager = ChatManager()
 
 chat = manager.create_chat("Testing Chat")
 
-print("Created:")
-print(chat.to_dict())
+manager.add_message(chat.id, "user", "Hello")
 
-print("\nAvailable Chats:")
-print(manager.list_chats())
+manager.add_message(chat.id, "assistant", "Hi there!")
 
-print("\nLoaded Chat:")
-print(manager.load_chat(chat.id))
+print(manager.get_messages(chat.id))

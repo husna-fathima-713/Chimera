@@ -1,0 +1,16 @@
+{
+    "chat": {
+        "id": "8f84806f-a448-48df-9d14-f26a26e60c81",
+        "title": "Testing Chat"
+    },
+    "messages": [
+        {
+            "role": "user",
+            "content": "Hello"
+        },
+        {
+            "role": "assistant",
+            "content": "Hi there!"
+        }
+    ]
+}

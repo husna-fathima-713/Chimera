@@ -46,3 +46,29 @@ class ChatManager:
 
         with open(file_path, "r", encoding="utf-8") as file:
             return json.load(file)
+
+    def add_message(self, chat_id, role, content):
+        chat = self.load_chat(chat_id)
+
+        if chat is None:
+            return
+
+        chat["messages"].append(
+            {
+                "role": role,
+                "content": content
+            }
+        )
+
+        file_path = self.STORAGE_PATH / f"{chat_id}.json"
+
+        with open(file_path, "w", encoding="utf-8") as file:
+            json.dump(chat, file, indent=4)
+
+    def get_messages(self, chat_id):
+        chat = self.load_chat(chat_id)
+
+        if chat is None:
+            return []
+
+        return chat["messages"]
