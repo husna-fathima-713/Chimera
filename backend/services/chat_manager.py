@@ -37,3 +37,12 @@ class ChatManager:
                 chats.append(data["chat"])
 
         return chats
+
+    def load_chat(self, chat_id):
+        file_path = self.STORAGE_PATH / f"{chat_id}.json"
+
+        if not file_path.exists():
+            return None
+
+        with open(file_path, "r", encoding="utf-8") as file:
+            return json.load(file)
