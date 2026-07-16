@@ -10,20 +10,16 @@ class ChatService:
 
     def chat(self, chat_id, prompt):
 
-        # Store user message
         self.chat_manager.add_message(
             chat_id,
             "user",
             prompt
         )
 
-        # Load chat history
         messages = self.chat_manager.get_messages(chat_id)
 
-        # Generate AI response
         response = self.model_manager.generate(messages)
 
-        # Store assistant response
         self.chat_manager.add_message(
             chat_id,
             "assistant",
