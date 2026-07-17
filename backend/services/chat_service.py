@@ -5,8 +5,11 @@ from backend.services.chat_manager import ChatManager
 class ChatService:
 
     def __init__(self):
-        self.model_manager = ModelManager()
+        self.model = ModelManager()
         self.chat_manager = ChatManager()
+
+    def create_chat(self, title="New Chat"):
+        return self.chat_manager.create_chat(title)
 
     def chat(self, chat_id, prompt):
 
@@ -18,7 +21,7 @@ class ChatService:
 
         messages = self.chat_manager.get_messages(chat_id)
 
-        response = self.model_manager.generate(messages)
+        response = self.model.generate(messages)
 
         self.chat_manager.add_message(
             chat_id,
