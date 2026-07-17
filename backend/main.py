@@ -1,23 +1,11 @@
 from fastapi import FastAPI
 
-from backend.config import APP_NAME, VERSION
-from backend.api.routes.health import router as health_router
 from backend.api.routes.chat import router as chat_router
+from backend.api.routes.chats import router as chats_router
+from backend.api.routes.health import router as health_router
 
-app = FastAPI(
-    title=APP_NAME,
-    version=VERSION,
-)
+app = FastAPI(title="Chimera")
 
-# Register API routers
 app.include_router(health_router)
 app.include_router(chat_router)
-
-
-@app.get("/")
-def root():
-    return {
-        "name": APP_NAME,
-        "status": "online",
-        "version": VERSION,
-    }
+app.include_router(chats_router)
