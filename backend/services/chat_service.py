@@ -1,5 +1,6 @@
 from backend.models.manager import ModelManager
 from backend.services.chat_manager import ChatManager
+from backend.rag.retriever import Retriever
 
 
 class ChatService:
@@ -7,9 +8,13 @@ class ChatService:
     def __init__(self):
         self.model = ModelManager()
         self.chat_manager = ChatManager()
+        self.retriever = Retriever()
 
     def create_chat(self, title="New Chat"):
         return self.chat_manager.create_chat(title)
+
+    def index_document(self, filepath):
+        self.retriever.index_document(filepath)
 
     def chat(self, chat_id, prompt):
 
