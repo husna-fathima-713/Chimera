@@ -1,5 +1,13 @@
 function Sidebar() {
-    return <div>Sidebar</div>;
+    return (
+        <>
+            <h2>Chimera</h2>
+
+            <br />
+
+            <button>+ New Chat</button>
+        </>
+    );
 }
 
 export default Sidebar;
