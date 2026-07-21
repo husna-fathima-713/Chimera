@@ -4,11 +4,25 @@ import MessageInput from "../components/MessageInput";
 
 function Home() {
     return (
-        <>
-            <Sidebar />
-            <ChatWindow />
-            <MessageInput />
-        </>
+        <div className="app">
+
+            <aside className="sidebar">
+                <Sidebar />
+            </aside>
+
+            <main className="main">
+
+                <div className="chat-window">
+                    <ChatWindow />
+                </div>
+
+                <div className="message-input">
+                    <MessageInput />
+                </div>
+
+            </main>
+
+        </div>
     );
 }
 
