@@ -1,23 +1,36 @@
-function MessageInput() {
+import { useState } from "react";
+
+function MessageInput({ onSend }) {
+
+    const [message, setMessage] = useState("");
+
+    function handleSend() {
+
+        if (!message.trim()) return;
+
+        onSend(message);
+
+        setMessage("");
+    }
+
     return (
-        <div>
+        <div style={{ display: "flex", gap: "10px" }}>
+
             <input
                 type="text"
                 placeholder="Type a message..."
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
                 style={{
-                    width: "85%",
-                    padding: "10px"
+                    flex: 1,
+                    padding: "12px"
                 }}
             />
 
-            <button
-                style={{
-                    marginLeft: "10px",
-                    padding: "10px 20px"
-                }}
-            >
+            <button onClick={handleSend}>
                 Send
             </button>
+
         </div>
     );
 }
