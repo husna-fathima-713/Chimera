@@ -14,6 +14,8 @@ function Home() {
 
     async function handleSend(prompt) {
 
+        console.log("Home received:", prompt);
+
         const userMessage = {
             role: "User",
             content: prompt,
@@ -21,18 +23,25 @@ function Home() {
 
         setMessages((prev) => [...prev, userMessage]);
 
-        const reply = await sendMessage(chatId, prompt);
+        try {
 
-        const assistantMessage = {
-            role: "Chimera",
-            content: reply,
-        };
+            const reply = await sendMessage(chatId, prompt);
 
-        setMessages((prev) => [...prev, assistantMessage]);
+            const assistantMessage = {
+                role: "Chimera",
+                content: reply,
+            };
+
+            setMessages((prev) => [...prev, assistantMessage]);
+
+        } catch (error) {
+
+            console.error("Backend Error:", error);
+
+        }
     }
 
     return (
-
         <div className="app">
 
             <aside className="sidebar">
@@ -52,7 +61,6 @@ function Home() {
             </main>
 
         </div>
-
     );
 }
 
