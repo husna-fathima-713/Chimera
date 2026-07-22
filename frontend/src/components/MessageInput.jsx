@@ -8,6 +8,8 @@ function MessageInput({ onSend }) {
 
         if (!message.trim()) return;
 
+        console.log("Sending:", message);
+
         onSend(message);
 
         setMessage("");
@@ -15,7 +17,6 @@ function MessageInput({ onSend }) {
 
     return (
         <div style={{ display: "flex", gap: "10px" }}>
-
             <input
                 type="text"
                 placeholder="Type a message..."
@@ -30,7 +31,6 @@ function MessageInput({ onSend }) {
             <button onClick={handleSend}>
                 Send
             </button>
-
         </div>
     );
 }
