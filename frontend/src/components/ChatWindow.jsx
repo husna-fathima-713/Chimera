@@ -1,11 +1,25 @@
-function ChatWindow() {
+function ChatWindow({ messages }) {
+
     return (
         <div>
-            <h3>Welcome to Chimera</h3>
 
-            <br />
+            {messages.map((msg, index) => (
 
-            <p>Your local AI assistant is ready.</p>
+                <div
+                    key={index}
+                    style={{
+                        marginBottom: "20px"
+                    }}
+                >
+
+                    <strong>{msg.role}</strong>
+
+                    <p>{msg.content}</p>
+
+                </div>
+
+            ))}
+
         </div>
     );
 }
