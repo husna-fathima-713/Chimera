@@ -3,6 +3,7 @@ import { useState } from "react";
 import Sidebar from "../components/Sidebar";
 import ChatWindow from "../components/ChatWindow";
 import MessageInput from "../components/MessageInput";
+import DocumentUpload from "../components/DocumentUpload";
 
 import { sendMessage } from "../services/chatService";
 
@@ -38,6 +39,12 @@ function Home() {
 
             console.error("Backend Error:", error);
 
+            const errorMessage = {
+                role: "System",
+                content: "Failed to contact the backend.",
+            };
+
+            setMessages((prev) => [...prev, errorMessage]);
         }
     }
 
@@ -45,7 +52,13 @@ function Home() {
         <div className="app">
 
             <aside className="sidebar">
+
                 <Sidebar />
+
+                <hr style={{ margin: "20px 0" }} />
+
+                <DocumentUpload />
+
             </aside>
 
             <main className="main">
