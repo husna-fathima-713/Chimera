@@ -18,34 +18,30 @@ class ChatService:
 
     def chat(self, chat_id, prompt):
 
-        # Store user message
         self.chat_manager.add_message(
             chat_id,
             "user",
             prompt
         )
 
-        # Get conversation history
         messages = self.chat_manager.get_messages(chat_id)
 
-        # Retrieve relevant context
+        # Retrieve relevant document context
         context = self.retriever.search(prompt)
 
-        # If context exists, inject it before the latest user message
         if context:
+            context_text = "\n\n".join(context)
 
             messages.insert(
-                -1,
+                0,
                 {
                     "role": "system",
-                    "content": f"Relevant Context:\n\n{context}"
+                    "content": f"Relevant document context:\n\n{context_text}"
                 }
             )
 
-        # Generate response
         response = self.model.generate(messages)
 
-        # Store assistant reply
         self.chat_manager.add_message(
             chat_id,
             "assistant",
