@@ -1,14 +1,11 @@
 from fastapi import APIRouter, UploadFile, File
 
-from backend.services.chat_service import ChatService
+from backend.services.service_locator import chat_service
 
 router = APIRouter()
 
-chat_service = ChatService()
-
 
 @router.post("/documents")
-
 async def upload_document(file: UploadFile = File(...)):
 
     filepath = f"backend/storage/{file.filename}"
