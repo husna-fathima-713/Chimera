@@ -1,6 +1,7 @@
-function ChatWindow({ messages }) {
+function ChatWindow({ messages = [] }) {
 
     return (
+
         <div>
 
             {messages.map((msg, index) => (
@@ -8,7 +9,7 @@ function ChatWindow({ messages }) {
                 <div
                     key={index}
                     style={{
-                        marginBottom: "20px"
+                        marginBottom: "20px",
                     }}
                 >
 
@@ -21,7 +22,9 @@ function ChatWindow({ messages }) {
             ))}
 
         </div>
+
     );
+
 }
 
 export default ChatWindow;
