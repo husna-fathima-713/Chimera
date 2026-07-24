@@ -19,7 +19,10 @@ class VectorStore:
 
         self.documents = []
 
-        if self.INDEX_FILE.exists():
+        if (
+            self.INDEX_FILE.exists()
+            and self.DOCUMENTS_FILE.exists()
+        ):
 
             self.index = faiss.read_index(str(self.INDEX_FILE))
 
@@ -28,11 +31,11 @@ class VectorStore:
 
         else:
 
-            self.index = faiss.IndexFlatL2(dimension)
+            self.index = faiss.IndexFlatL2(self.dimension)
 
     def add(self, embeddings, chunks):
 
-        vectors = np.array(embeddings).astype("float32")
+        vectors = np.array(embeddings, dtype=np.float32)
 
         self.index.add(vectors)
 
@@ -47,7 +50,7 @@ class VectorStore:
 
         k = min(k, self.index.ntotal)
 
-        vector = np.array([embedding]).astype("float32")
+        vector = np.array([embedding], dtype=np.float32)
 
         distances, indices = self.index.search(vector, k)
 
@@ -55,7 +58,10 @@ class VectorStore:
 
         for idx in indices[0]:
 
-            if 0 <= idx < len(self.documents):
+            if idx == -1:
+                continue
+
+            if idx < len(self.documents):
                 results.append(self.documents[idx])
 
         return results
@@ -64,8 +70,11 @@ class VectorStore:
 
         faiss.write_index(
             self.index,
-            str(self.INDEX_FILE)
+            str(self.INDEX_FILE),
         )
 
         with open(self.DOCUMENTS_FILE, "wb") as file:
-            pickle.dump(self.documents, file)
+            pickle.dump(
+                self.documents,
+                file,
+            )
