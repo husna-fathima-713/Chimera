@@ -3,6 +3,7 @@ import { useState } from "react";
 import Sidebar from "../components/Sidebar";
 import ChatWindow from "../components/ChatWindow";
 import MessageInput from "../components/MessageInput";
+import DocumentUpload from "../components/DocumentUpload";
 
 import { sendMessage } from "../services/chatService";
 
@@ -35,7 +36,9 @@ function Home() {
                 assistantMessage,
             ]);
 
-        } catch (error) {
+        }
+
+        catch (error) {
 
             console.error(error);
 
@@ -43,7 +46,7 @@ function Home() {
                 ...prev,
                 {
                     role: "System",
-                    content: "Failed to contact the backend.",
+                    content: "Failed to contact backend.",
                 },
             ]);
 
@@ -56,17 +59,27 @@ function Home() {
         <div className="app">
 
             <aside className="sidebar">
+
                 <Sidebar />
+
+                <hr />
+
+                <DocumentUpload />
+
             </aside>
 
             <main className="main">
 
                 <div className="chat-window">
+
                     <ChatWindow messages={messages} />
+
                 </div>
 
                 <div className="message-input">
+
                     <MessageInput onSend={handleSend} />
+
                 </div>
 
             </main>
