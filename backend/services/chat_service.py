@@ -26,21 +26,17 @@ class ChatService:
 
         messages = self.chat_manager.get_messages(chat_id)
 
-        # Retrieve relevant document context
         context = self.retriever.search(prompt)
+
+        context_text = None
 
         if context:
             context_text = "\n\n".join(context)
 
-            messages.insert(
-                0,
-                {
-                    "role": "system",
-                    "content": f"Relevant document context:\n\n{context_text}"
-                }
-            )
-
-        response = self.model.generate(messages)
+        response = self.model.generate(
+            messages,
+            context=context_text
+        )
 
         self.chat_manager.add_message(
             chat_id,
