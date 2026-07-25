@@ -28,15 +28,30 @@ class ChatService:
 
         context = self.retriever.search(prompt)
 
-        context_text = None
+        print("\n==========================")
+        print("RETRIEVED CHUNKS")
+        print("==========================")
+
+        for i, chunk in enumerate(context, start=1):
+            print(f"\nChunk {i}:\n")
+            print(chunk[:700])
+            print("\n--------------------------")
 
         if context:
+
             context_text = "\n\n".join(context)
 
-        response = self.model.generate(
-            messages,
-            context=context_text
-        )
+            messages.insert(
+                0,
+                {
+                    "role": "system",
+                    "content":
+                        "Answer ONLY using the document context below.\n\n"
+                        + context_text
+                }
+            )
+
+        response = self.model.generate(messages)
 
         self.chat_manager.add_message(
             chat_id,
