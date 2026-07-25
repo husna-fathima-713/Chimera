@@ -33,13 +33,27 @@ class ChatService:
         print("==========================")
 
         for i, chunk in enumerate(context, start=1):
-            print(f"\nChunk {i}:\n")
-            print(chunk[:700])
+
+            print(f"\nChunk {i}")
+            print(f"Source : {chunk['source']}")
+            print(f"Chunk ID : {chunk['chunk_id']}")
+            print()
+
+            print(chunk["text"][:700])
+
             print("\n--------------------------")
 
         if context:
 
-            context_text = "\n\n".join(context)
+            context_text = ""
+
+            for chunk in context:
+
+                context_text += (
+                    f"Source: {chunk['source']}\n"
+                    f"Chunk: {chunk['chunk_id']}\n"
+                    f"{chunk['text']}\n\n"
+                )
 
             messages.insert(
                 0,
