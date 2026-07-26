@@ -1,20 +1,42 @@
+import { useEffect, useState } from "react";
+
 import ChatItem from "./ChatItem";
+
+import { getChats } from "../services/chatListService";
 
 function ChatList() {
 
-    const chats = [
-        {
-            id: 1,
-            title: "New Chat",
-            active: true,
+    const [chats, setChats] = useState([]);
+
+    useEffect(() => {
+
+        loadChats();
+
+    }, []);
+
+    async function loadChats() {
+
+        try {
+
+            const data = await getChats();
+
+            setChats(data);
+
         }
-    ];
+
+        catch (error) {
+
+            console.error(error);
+
+        }
+
+    }
 
     return (
 
         <div
             style={{
-                marginTop: "20px",
+                marginTop: "20px"
             }}
         >
 
@@ -23,7 +45,7 @@ function ChatList() {
                 <ChatItem
                     key={chat.id}
                     title={chat.title}
-                    active={chat.active}
+                    active={false}
                 />
 
             ))}
