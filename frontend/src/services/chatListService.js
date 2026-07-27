@@ -8,6 +8,14 @@ export async function getChats() {
 
 }
 
+export async function getChat(chatId) {
+
+    const response = await api.get(`/chats/${chatId}`);
+
+    return response.data;
+
+}
+
 export async function createChat() {
 
     const response = await api.post("/chats");
