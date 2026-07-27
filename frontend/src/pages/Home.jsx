@@ -10,10 +10,14 @@ import { sendMessage } from "../services/chatService";
 function Home() {
 
     const [messages, setMessages] = useState([]);
-
-    const chatId = "default";
+    const [chatId, setChatId] = useState(null);
 
     async function handleSend(prompt) {
+
+        if (!chatId) {
+            alert("Create or select a chat first.");
+            return;
+        }
 
         const userMessage = {
             role: "User",
@@ -36,19 +40,9 @@ function Home() {
                 assistantMessage,
             ]);
 
-        }
-
-        catch (error) {
+        } catch (error) {
 
             console.error(error);
-
-            setMessages(prev => [
-                ...prev,
-                {
-                    role: "System",
-                    content: "Failed to contact backend.",
-                },
-            ]);
 
         }
 
@@ -60,26 +54,24 @@ function Home() {
 
             <aside className="sidebar">
 
-                <Sidebar />
-
-                <hr />
-
-                <DocumentUpload />
+                <Sidebar
+                    chatId={chatId}
+                    setChatId={setChatId}
+                    setMessages={setMessages}
+                />
 
             </aside>
 
             <main className="main">
 
+                <DocumentUpload />
+
                 <div className="chat-window">
-
                     <ChatWindow messages={messages} />
-
                 </div>
 
                 <div className="message-input">
-
                     <MessageInput onSend={handleSend} />
-
                 </div>
 
             </main>
