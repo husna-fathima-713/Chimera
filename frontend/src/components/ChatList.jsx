@@ -2,9 +2,18 @@ import { useEffect, useState } from "react";
 
 import ChatItem from "./ChatItem";
 
-import { getChats } from "../services/chatListService";
+import {
+    getChats,
+    getChat,
+} from "../services/chatListService";
 
-function ChatList() {
+function ChatList({
+
+    chatId,
+    setChatId,
+    setMessages,
+
+}) {
 
     const [chats, setChats] = useState([]);
 
@@ -32,23 +41,53 @@ function ChatList() {
 
     }
 
+    async function selectChat(chat) {
+
+        try {
+
+            const data = await getChat(chat.id);
+
+            setChatId(chat.id);
+
+            setMessages(data.messages);
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+        }
+
+    }
+
     return (
 
         <div
             style={{
-                marginTop: "20px"
+                marginTop: "20px",
             }}
         >
 
-            {chats.map(chat => (
+            {
 
-                <ChatItem
-                    key={chat.id}
-                    title={chat.title}
-                    active={false}
-                />
+                chats.map(chat => (
 
-            ))}
+                    <ChatItem
+
+                        key={chat.id}
+
+                        chat={chat}
+
+                        active={chat.id === chatId}
+
+                        onClick={() => selectChat(chat)}
+
+                    />
+
+                ))
+
+            }
 
         </div>
 
