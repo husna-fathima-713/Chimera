@@ -1,6 +1,34 @@
 import ChatList from "./ChatList";
 
-function Sidebar() {
+import { createChat } from "../services/chatListService";
+
+function Sidebar({
+    chatId,
+    setChatId,
+    setMessages,
+}) {
+
+    async function handleNewChat() {
+
+        try {
+
+            const chat = await createChat();
+
+            setChatId(chat.id);
+
+            setMessages([]);
+
+            window.location.reload();
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+        }
+
+    }
 
     return (
 
@@ -15,6 +43,7 @@ function Sidebar() {
             </h2>
 
             <button
+                onClick={handleNewChat}
                 style={{
                     padding: "12px",
                     borderRadius: "8px",
@@ -26,7 +55,11 @@ function Sidebar() {
                 + New Chat
             </button>
 
-            <ChatList />
+            <ChatList
+                chatId={chatId}
+                setChatId={setChatId}
+                setMessages={setMessages}
+            />
 
         </>
 
