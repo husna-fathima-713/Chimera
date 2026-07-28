@@ -1,67 +1,47 @@
+import DocumentUpload from "./DocumentUpload";
 import ChatList from "./ChatList";
 
-import { createChat } from "../services/chatListService";
-
 function Sidebar({
+
     chatId,
     setChatId,
     setMessages,
-    refreshChats
+
+    refreshChats,
+    setRefreshChats,
+
+    onNewChat
+
 }) {
-
-    async function handleNewChat() {
-
-        try {
-
-            const chat = await createChat();
-
-            setChatId(chat.id);
-
-            setMessages([]);
-
-            refreshChats();
-
-        }
-
-        catch (error) {
-
-            console.error(error);
-
-        }
-
-    }
 
     return (
 
         <>
 
-            <h2
-                style={{
-                    marginBottom: "20px"
-                }}
-            >
-                Chimera
-            </h2>
+            <h2>Chimera</h2>
+
+            <br />
 
             <button
-                onClick={handleNewChat}
+                onClick={onNewChat}
                 style={{
-                    padding: "12px",
-                    borderRadius: "8px",
-                    background: "#343541",
-                    color: "white",
-                    marginBottom: "20px",
-                    width: "100%"
+                    width: "100%",
+                    marginBottom: "15px",
+                    padding: "10px"
                 }}
             >
                 + New Chat
             </button>
 
+            <DocumentUpload />
+
             <ChatList
+
                 chatId={chatId}
                 setChatId={setChatId}
                 setMessages={setMessages}
                 refreshChats={refreshChats}
+
             />
 
         </>
