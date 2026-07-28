@@ -12,16 +12,11 @@ function ChatList({
     chatId,
     setChatId,
     setMessages,
+    refreshChats
 
 }) {
 
     const [chats, setChats] = useState([]);
-
-    useEffect(() => {
-
-        loadChats();
-
-    }, []);
 
     async function loadChats() {
 
@@ -40,6 +35,12 @@ function ChatList({
         }
 
     }
+
+    useEffect(() => {
+
+        loadChats();
+
+    }, [refreshChats]);
 
     async function selectChat(chat) {
 
@@ -65,7 +66,7 @@ function ChatList({
 
         <div
             style={{
-                marginTop: "20px",
+                marginTop: "20px"
             }}
         >
 
