@@ -6,6 +6,7 @@ function Sidebar({
     chatId,
     setChatId,
     setMessages,
+    refreshChats
 }) {
 
     async function handleNewChat() {
@@ -18,7 +19,7 @@ function Sidebar({
 
             setMessages([]);
 
-            window.location.reload();
+            refreshChats();
 
         }
 
@@ -49,7 +50,8 @@ function Sidebar({
                     borderRadius: "8px",
                     background: "#343541",
                     color: "white",
-                    marginBottom: "20px"
+                    marginBottom: "20px",
+                    width: "100%"
                 }}
             >
                 + New Chat
@@ -59,6 +61,7 @@ function Sidebar({
                 chatId={chatId}
                 setChatId={setChatId}
                 setMessages={setMessages}
+                refreshChats={refreshChats}
             />
 
         </>
