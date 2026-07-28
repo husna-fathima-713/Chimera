@@ -1,18 +1,44 @@
+import { useState } from "react";
+
 import DocumentUpload from "./DocumentUpload";
 import ChatList from "./ChatList";
+
+import { createChat } from "../services/chatListService";
 
 function Sidebar({
 
     chatId,
     setChatId,
     setMessages,
-
-    refreshChats,
-    setRefreshChats,
-
-    onNewChat
+    refreshChats
 
 }) {
+
+    const [reload, setReload] = useState(false);
+
+    async function handleCreateChat() {
+
+        try {
+
+            const chat = await createChat();
+
+            setChatId(chat.id);
+
+            setMessages([]);
+
+            setReload(prev => !prev);
+
+            refreshChats();
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+        }
+
+    }
 
     return (
 
@@ -23,24 +49,25 @@ function Sidebar({
             <br />
 
             <button
-                onClick={onNewChat}
-                style={{
-                    width: "100%",
-                    marginBottom: "15px",
-                    padding: "10px"
-                }}
+                onClick={handleCreateChat}
             >
                 + New Chat
             </button>
+
+            <br />
+            <br />
 
             <DocumentUpload />
 
             <ChatList
 
                 chatId={chatId}
+
                 setChatId={setChatId}
+
                 setMessages={setMessages}
-                refreshChats={refreshChats}
+
+                refreshChats={reload}
 
             />
 
