@@ -3,7 +3,6 @@ import { useState } from "react";
 import Sidebar from "../components/Sidebar";
 import ChatWindow from "../components/ChatWindow";
 import MessageInput from "../components/MessageInput";
-import DocumentUpload from "../components/DocumentUpload";
 
 import { sendMessage } from "../services/chatService";
 
@@ -17,13 +16,19 @@ function Home() {
     async function handleSend(prompt) {
 
         if (!chatId) {
+
             alert("Create or select a chat first.");
+
             return;
+
         }
 
         const userMessage = {
+
             role: "User",
+
             content: prompt,
+
         };
 
         setMessages(prev => [...prev, userMessage]);
@@ -33,31 +38,33 @@ function Home() {
             const reply = await sendMessage(chatId, prompt);
 
             setMessages(prev => [
+
                 ...prev,
+
                 {
+
                     role: "Chimera",
+
                     content: reply,
+
                 }
+
             ]);
 
-        } catch (error) {
+        }
+
+        catch (error) {
 
             console.error(error);
-
-            setMessages(prev => [
-                ...prev,
-                {
-                    role: "System",
-                    content: "Failed to contact backend."
-                }
-            ]);
 
         }
 
     }
 
     function reloadChats() {
+
         setRefreshChats(prev => !prev);
+
     }
 
     return (
@@ -67,25 +74,24 @@ function Home() {
             <aside className="sidebar">
 
                 <Sidebar
+
                     chatId={chatId}
                     setChatId={setChatId}
                     setMessages={setMessages}
                     refreshChats={reloadChats}
-                    refreshTrigger={refreshChats}
+
                 />
 
             </aside>
 
             <main className="main">
 
-                <DocumentUpload
-                    refreshChats={reloadChats}
-                />
-
                 <div className="chat-window">
 
                     <ChatWindow
+
                         messages={messages}
+
                     />
 
                 </div>
@@ -93,7 +99,9 @@ function Home() {
                 <div className="message-input">
 
                     <MessageInput
+
                         onSend={handleSend}
+
                     />
 
                 </div>
