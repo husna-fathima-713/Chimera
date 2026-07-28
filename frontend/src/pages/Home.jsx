@@ -12,16 +12,24 @@ function Home() {
     const [messages, setMessages] = useState([]);
     const [chatId, setChatId] = useState(null);
 
+    const [refreshChats, setRefreshChats] = useState(false);
+
     async function handleSend(prompt) {
 
         if (!chatId) {
+
             alert("Create or select a chat first.");
+
             return;
+
         }
 
         const userMessage = {
+
             role: "User",
+
             content: prompt,
+
         };
 
         setMessages(prev => [...prev, userMessage]);
@@ -30,21 +38,33 @@ function Home() {
 
             const reply = await sendMessage(chatId, prompt);
 
-            const assistantMessage = {
-                role: "Chimera",
-                content: reply,
-            };
-
             setMessages(prev => [
+
                 ...prev,
-                assistantMessage,
+
+                {
+
+                    role: "Chimera",
+
+                    content: reply,
+
+                }
+
             ]);
 
-        } catch (error) {
+        }
+
+        catch (error) {
 
             console.error(error);
 
         }
+
+    }
+
+    function reloadChats() {
+
+        setRefreshChats(prev => !prev);
 
     }
 
@@ -55,9 +75,15 @@ function Home() {
             <aside className="sidebar">
 
                 <Sidebar
+
                     chatId={chatId}
+
                     setChatId={setChatId}
+
                     setMessages={setMessages}
+
+                    refreshChats={reloadChats}
+
                 />
 
             </aside>
@@ -67,11 +93,23 @@ function Home() {
                 <DocumentUpload />
 
                 <div className="chat-window">
-                    <ChatWindow messages={messages} />
+
+                    <ChatWindow
+
+                        messages={messages}
+
+                    />
+
                 </div>
 
                 <div className="message-input">
-                    <MessageInput onSend={handleSend} />
+
+                    <MessageInput
+
+                        onSend={handleSend}
+
+                    />
+
                 </div>
 
             </main>
