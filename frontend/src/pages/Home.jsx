@@ -3,15 +3,17 @@ import { useState } from "react";
 import Sidebar from "../components/Sidebar";
 import ChatWindow from "../components/ChatWindow";
 import MessageInput from "../components/MessageInput";
+import DocumentUpload from "../components/DocumentUpload";
 
 import { sendMessage } from "../services/chatService";
 
 function Home() {
 
     const [messages, setMessages] = useState([]);
+
     const [chatId, setChatId] = useState(null);
 
-    const [refreshChats, setRefreshChats] = useState(false);
+    const [refreshChats, setRefreshChats] = useState(0);
 
     async function handleSend(prompt) {
 
@@ -63,7 +65,7 @@ function Home() {
 
     function reloadChats() {
 
-        setRefreshChats(prev => !prev);
+        setRefreshChats(prev => prev + 1);
 
     }
 
@@ -76,8 +78,11 @@ function Home() {
                 <Sidebar
 
                     chatId={chatId}
+
                     setChatId={setChatId}
+
                     setMessages={setMessages}
+
                     refreshChats={reloadChats}
 
                 />
@@ -86,12 +91,12 @@ function Home() {
 
             <main className="main">
 
+                <DocumentUpload />
+
                 <div className="chat-window">
 
                     <ChatWindow
-
                         messages={messages}
-
                     />
 
                 </div>
@@ -99,9 +104,7 @@ function Home() {
                 <div className="message-input">
 
                     <MessageInput
-
                         onSend={handleSend}
-
                     />
 
                 </div>
