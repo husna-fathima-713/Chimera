@@ -7,10 +7,6 @@ import {
     getChat,
 } from "../services/chatListService";
 
-import {
-    saveCurrentChat,
-} from "../services/localStorageService";
-
 function ChatList({
 
     chatId,
@@ -22,6 +18,26 @@ function ChatList({
 
     const [chats, setChats] = useState([]);
 
+    async function selectChat(chat) {
+
+        try {
+
+            const data = await getChat(chat.id);
+
+            setChatId(chat.id);
+
+            setMessages(data.messages);
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+        }
+
+    }
+
     async function loadChats() {
 
         try {
@@ -29,6 +45,16 @@ function ChatList({
             const data = await getChats();
 
             setChats(data);
+
+            // Automatically open the newest chat
+            if (
+                data.length > 0 &&
+                !chatId
+            ) {
+
+                selectChat(data[0]);
+
+            }
 
         }
 
@@ -45,28 +71,6 @@ function ChatList({
         loadChats();
 
     }, [refreshChats]);
-
-    async function selectChat(chat) {
-
-        try {
-
-            const data = await getChat(chat.id);
-
-            setChatId(chat.id);
-
-            saveCurrentChat(chat.id);
-
-            setMessages(data.messages);
-
-        }
-
-        catch (error) {
-
-            console.error(error);
-
-        }
-
-    }
 
     return (
 
