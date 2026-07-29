@@ -7,7 +7,7 @@ function ChatWindow({ messages }) {
     useEffect(() => {
 
         bottomRef.current?.scrollIntoView({
-            behavior: "smooth"
+            behavior: "smooth",
         });
 
     }, [messages]);
@@ -25,11 +25,8 @@ function ChatWindow({ messages }) {
                         style={{
                             marginBottom: "20px",
                             padding: "12px",
+                            background: "#2b2d31",
                             borderRadius: "8px",
-                            background:
-                                msg.role === "User"
-                                    ? "#2d2d2d"
-                                    : "#353535"
                         }}
                     >
 
@@ -39,7 +36,8 @@ function ChatWindow({ messages }) {
 
                         <p
                             style={{
-                                marginTop: "8px"
+                                marginTop: "8px",
+                                whiteSpace: "pre-wrap",
                             }}
                         >
                             {msg.content}
