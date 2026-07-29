@@ -7,6 +7,10 @@ import {
     getChat,
 } from "../services/chatListService";
 
+import {
+    saveCurrentChat,
+} from "../services/localStorageService";
+
 function ChatList({
 
     chatId,
@@ -49,6 +53,8 @@ function ChatList({
             const data = await getChat(chat.id);
 
             setChatId(chat.id);
+
+            saveCurrentChat(chat.id);
 
             setMessages(data.messages);
 
