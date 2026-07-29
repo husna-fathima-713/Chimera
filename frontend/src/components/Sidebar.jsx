@@ -17,11 +17,11 @@ function Sidebar({
 
             const chat = await createChat();
 
+            refreshChats();
+
             setChatId(chat.id);
 
             setMessages([]);
-
-            refreshChats(chat.id);
 
         }
 
