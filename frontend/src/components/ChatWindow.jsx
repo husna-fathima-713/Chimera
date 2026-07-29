@@ -7,7 +7,7 @@ function ChatWindow({ messages }) {
     useEffect(() => {
 
         bottomRef.current?.scrollIntoView({
-            behavior: "smooth",
+            behavior: "smooth"
         });
 
     }, [messages]);
@@ -18,68 +18,40 @@ function ChatWindow({ messages }) {
 
             {
 
-                messages.map((msg, index) => {
+                messages.map((msg, index) => (
 
-                    const isUser = msg.role.toLowerCase() === "user";
+                    <div
+                        key={index}
+                        style={{
+                            marginBottom: "20px",
+                            padding: "12px",
+                            borderRadius: "8px",
+                            background:
+                                msg.role === "User"
+                                    ? "#2d2d2d"
+                                    : "#353535"
+                        }}
+                    >
 
-                    return (
+                        <strong>
+                            {msg.role}
+                        </strong>
 
-                        <div
-                            key={index}
+                        <p
                             style={{
-                                display: "flex",
-                                justifyContent: isUser
-                                    ? "flex-end"
-                                    : "flex-start",
-                                marginBottom: "20px",
+                                marginTop: "8px"
                             }}
                         >
+                            {msg.content}
+                        </p>
 
-                            <div
-                                style={{
-                                    maxWidth: "75%",
-                                    background: isUser
-                                        ? "#0b93f6"
-                                        : "#2d2d2d",
-                                    padding: "14px",
-                                    borderRadius: "14px",
-                                    whiteSpace: "pre-wrap",
-                                }}
-                            >
+                    </div>
 
-                                <strong>
-
-                                    {
-
-                                        isUser
-                                            ? "You"
-                                            : "Chimera"
-
-                                    }
-
-                                </strong>
-
-                                <div
-                                    style={{
-                                        marginTop: "8px",
-                                    }}
-                                >
-
-                                    {msg.content}
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    );
-
-                })
+                ))
 
             }
 
-            <div ref={bottomRef}></div>
+            <div ref={bottomRef} />
 
         </div>
 
