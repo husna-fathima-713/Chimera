@@ -1,6 +1,3 @@
-import { useState } from "react";
-
-import DocumentUpload from "./DocumentUpload";
 import ChatList from "./ChatList";
 
 import { createChat } from "../services/chatListService";
@@ -14,9 +11,7 @@ function Sidebar({
 
 }) {
 
-    const [reload, setReload] = useState(false);
-
-    async function handleCreateChat() {
+    async function handleNewChat() {
 
         try {
 
@@ -26,9 +21,7 @@ function Sidebar({
 
             setMessages([]);
 
-            setReload(prev => !prev);
-
-            refreshChats();
+            refreshChats(chat.id);
 
         }
 
@@ -49,15 +42,10 @@ function Sidebar({
             <br />
 
             <button
-                onClick={handleCreateChat}
+                onClick={handleNewChat}
             >
                 + New Chat
             </button>
-
-            <br />
-            <br />
-
-            <DocumentUpload />
 
             <ChatList
 
@@ -67,7 +55,7 @@ function Sidebar({
 
                 setMessages={setMessages}
 
-                refreshChats={reload}
+                refreshChats={refreshChats}
 
             />
 
