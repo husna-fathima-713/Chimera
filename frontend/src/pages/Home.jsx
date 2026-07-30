@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import Sidebar from "../components/Sidebar";
 import ChatWindow from "../components/ChatWindow";
@@ -6,52 +6,15 @@ import MessageInput from "../components/MessageInput";
 import DocumentUpload from "../components/DocumentUpload";
 
 import { sendMessage } from "../services/chatService";
-import { getChats, getChat } from "../services/chatListService";
 
 function Home() {
 
     const [messages, setMessages] = useState([]);
-
     const [chatId, setChatId] = useState(null);
 
     const [refreshChats, setRefreshChats] = useState(false);
 
-    function reloadChats() {
-        setRefreshChats(prev => !prev);
-    }
-
-    useEffect(() => {
-
-        async function loadLatestChat() {
-
-            try {
-
-                const chats = await getChats();
-
-                if (chats.length === 0)
-                    return;
-
-                const latest = chats[chats.length - 1];
-
-                setChatId(latest.id);
-
-                const data = await getChat(latest.id);
-
-                setMessages(data.messages);
-
-            }
-
-            catch (error) {
-
-                console.error(error);
-
-            }
-
-        }
-
-        loadLatestChat();
-
-    }, []);
+    const [loading, setLoading] = useState(false);
 
     async function handleSend(prompt) {
 
@@ -72,6 +35,8 @@ function Home() {
         };
 
         setMessages(prev => [...prev, userMessage]);
+
+        setLoading(true);
 
         try {
 
@@ -98,6 +63,18 @@ function Home() {
             console.error(error);
 
         }
+
+        finally {
+
+            setLoading(false);
+
+        }
+
+    }
+
+    function reloadChats() {
+
+        setRefreshChats(prev => !prev);
 
     }
 
@@ -130,6 +107,8 @@ function Home() {
                     <ChatWindow
 
                         messages={messages}
+
+                        loading={loading}
 
                     />
 
