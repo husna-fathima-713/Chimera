@@ -13,9 +13,6 @@ class ChatService:
     def create_chat(self, title="New Chat"):
         return self.chat_manager.create_chat(title)
 
-    def delete_chat(self, chat_id):
-        self.chat_manager.delete_chat(chat_id)
-
     def index_document(self, filepath):
         self.retriever.index_document(filepath)
 
@@ -31,6 +28,18 @@ class ChatService:
 
         context = self.retriever.search(prompt)
 
+        print("\n==========================")
+        print("RETRIEVED CHUNKS")
+        print("==========================")
+
+        for i, chunk in enumerate(context, start=1):
+
+            print(f"\nChunk {i}")
+            print(f"Source : {chunk['source']}")
+            print(f"Chunk ID : {chunk['chunk_id']}\n")
+            print(chunk["text"][:700])
+            print("\n--------------------------")
+
         if context:
 
             context_text = "\n\n".join(
@@ -42,17 +51,9 @@ class ChatService:
                 {
                     "role": "system",
                     "content":
-                        "Answer ONLY using the following context.\n\n"
+                        "Answer ONLY using the document context below.\n\n"
                         + context_text
                 }
             )
 
-        response = self.model.generate(messages)
-
-        self.chat_manager.add_message(
-            chat_id,
-            "assistant",
-            response
-        )
-
-        return response
+        return self.model.stream(messages)
