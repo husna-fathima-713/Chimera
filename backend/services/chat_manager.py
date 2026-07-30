@@ -9,7 +9,11 @@ class ChatManager:
     STORAGE_PATH = Path("backend/storage/chats")
 
     def __init__(self):
-        self.STORAGE_PATH.mkdir(parents=True, exist_ok=True)
+
+        self.STORAGE_PATH.mkdir(
+            parents=True,
+            exist_ok=True
+        )
 
     def create_chat(self, title="New Chat"):
 
@@ -25,7 +29,7 @@ class ChatManager:
                     "messages": []
                 },
                 file,
-                indent=4,
+                indent=4
             )
 
         return chat
@@ -52,6 +56,7 @@ class ChatManager:
             return None
 
         with open(file_path, "r", encoding="utf-8") as file:
+
             return json.load(file)
 
     def delete_chat(self, chat_id):
@@ -59,6 +64,7 @@ class ChatManager:
         file_path = self.STORAGE_PATH / f"{chat_id}.json"
 
         if file_path.exists():
+
             file_path.unlink()
 
     def add_message(self, chat_id, role, content):
@@ -79,7 +85,11 @@ class ChatManager:
 
         with open(file_path, "w", encoding="utf-8") as file:
 
-            json.dump(chat, file, indent=4)
+            json.dump(
+                chat,
+                file,
+                indent=4
+            )
 
     def get_messages(self, chat_id):
 
