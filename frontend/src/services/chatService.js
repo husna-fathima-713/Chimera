@@ -1,36 +1,67 @@
-import api from "../api/api";
+const API_URL = "http://127.0.0.1:8000";
 
-export async function createChat() {
+export async function sendMessage(chatId, prompt, onChunk) {
 
-    const response = await api.post("/chats");
+    const response = await fetch(
 
-    return response.data;
+        `${API_URL}/chat`,
 
-}
+        {
 
-export async function getChats() {
+            method: "POST",
 
-    const response = await api.get("/chats");
+            headers: {
 
-    return response.data;
+                "Content-Type": "application/json",
 
-}
+            },
 
-export async function loadChat(chatId) {
+            body: JSON.stringify({
 
-    const response = await api.get(`/chats/${chatId}`);
+                chat_id: chatId,
 
-    return response.data;
+                prompt: prompt,
 
-}
+            }),
 
-export async function sendMessage(chatId, prompt) {
+        }
 
-    const response = await api.post("/chat", {
-        chat_id: chatId,
-        prompt: prompt,
-    });
+    );
 
-    return response.data.response;
+    if (!response.ok) {
+
+        throw new Error("Failed to contact backend.");
+
+    }
+
+    const reader = response.body.getReader();
+
+    const decoder = new TextDecoder();
+
+    let fullResponse = "";
+
+    while (true) {
+
+        const { done, value } = await reader.read();
+
+        if (done) {
+
+            break;
+
+        }
+
+        const chunk = decoder.decode(value);
+
+        fullResponse += chunk;
+
+        if (onChunk) {
+
+            onChunk(fullResponse);
+
+        }
+
+    }
+
+    return fullResponse;
 
 }
