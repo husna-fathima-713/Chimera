@@ -1,16 +1,16 @@
 import { useEffect, useRef } from "react";
 
-function ChatWindow({ messages }) {
+function ChatWindow({ messages, loading }) {
 
     const bottomRef = useRef(null);
 
     useEffect(() => {
 
         bottomRef.current?.scrollIntoView({
-            behavior: "smooth"
+            behavior: "smooth",
         });
 
-    }, [messages]);
+    }, [messages, loading]);
 
     return (
 
@@ -21,7 +21,9 @@ function ChatWindow({ messages }) {
                 messages.map((msg, index) => (
 
                     <div
+
                         key={index}
+
                         style={{
                             marginBottom: "20px",
                             padding: "12px",
@@ -31,6 +33,7 @@ function ChatWindow({ messages }) {
                                     ? "#2d3748"
                                     : "#1f2937",
                         }}
+
                     >
 
                         <strong>{msg.role}</strong>
@@ -47,6 +50,28 @@ function ChatWindow({ messages }) {
                     </div>
 
                 ))
+
+            }
+
+            {
+
+                loading && (
+
+                    <div
+
+                        style={{
+                            padding: "12px",
+                            color: "#999",
+                            fontStyle: "italic",
+                        }}
+
+                    >
+
+                        Chimera is thinking...
+
+                    </div>
+
+                )
 
             }
 
