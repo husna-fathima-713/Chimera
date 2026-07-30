@@ -1,24 +1,23 @@
 from fastapi import APIRouter
-from pydantic import BaseModel
+from fastapi.responses import StreamingResponse
 
-from backend.services.service_locator import chat_service
+from backend.schemas.chat import ChatRequest
+from backend.services.chat_service import ChatService
 
 router = APIRouter()
 
-
-class ChatRequest(BaseModel):
-    chat_id: str
-    prompt: str
+chat_service = ChatService()
 
 
 @router.post("/chat")
 def chat(request: ChatRequest):
 
-    response = chat_service.chat(
+    stream = chat_service.chat(
         request.chat_id,
         request.prompt
     )
 
-    return {
-        "response": response
-    }
+    return StreamingResponse(
+        stream,
+        media_type="text/plain"
+    )
