@@ -1,5 +1,13 @@
 import api from "../api/api";
 
+export async function createChat() {
+
+    const response = await api.post("/chats");
+
+    return response.data;
+
+}
+
 export async function getChats() {
 
     const response = await api.get("/chats");
@@ -16,10 +24,8 @@ export async function getChat(chatId) {
 
 }
 
-export async function createChat() {
+export async function deleteChat(chatId) {
 
-    const response = await api.post("/chats");
-
-    return response.data;
+    await api.delete(`/chats/${chatId}`);
 
 }
