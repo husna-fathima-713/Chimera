@@ -17,6 +17,8 @@ class ModelManager:
 
     def stream(self, messages):
 
+        print("\n========== OLLAMA STREAM START ==========\n")
+
         stream = chat(
             model=self.model_name,
             messages=messages,
@@ -25,6 +27,13 @@ class ModelManager:
 
         for chunk in stream:
 
+            print(chunk)
+
             if "message" in chunk:
 
-                yield chunk["message"]["content"]
+                content = chunk["message"].get("content", "")
+
+                if content:
+                    yield content
+
+        print("\n========== OLLAMA STREAM END ==========\n")
