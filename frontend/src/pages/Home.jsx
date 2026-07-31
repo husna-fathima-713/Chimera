@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Sidebar from "../components/Sidebar";
 import ChatWindow from "../components/ChatWindow";
@@ -6,6 +6,7 @@ import MessageInput from "../components/MessageInput";
 import DocumentUpload from "../components/DocumentUpload";
 
 import { sendMessage } from "../services/chatService";
+import { getChats, getChat } from "../services/chatListService";
 
 function Home() {
 
@@ -15,6 +16,45 @@ function Home() {
     const [refreshChats, setRefreshChats] = useState(false);
 
     const [loading, setLoading] = useState(false);
+
+    function reloadChats() {
+
+        setRefreshChats(prev => !prev);
+
+    }
+
+    useEffect(() => {
+
+        async function loadLatestChat() {
+
+            try {
+
+                const chats = await getChats();
+
+                if (chats.length === 0)
+                    return;
+
+                const latest = chats[chats.length - 1];
+
+                setChatId(latest.id);
+
+                const data = await getChat(latest.id);
+
+                setMessages(data.messages);
+
+            }
+
+            catch (error) {
+
+                console.error(error);
+
+            }
+
+        }
+
+        loadLatestChat();
+
+    }, []);
 
     async function handleSend(prompt) {
 
@@ -34,27 +74,55 @@ function Home() {
 
         };
 
-        setMessages(prev => [...prev, userMessage]);
+        const assistantIndex = messages.length + 1;
+
+        setMessages(prev => [
+
+            ...prev,
+
+            userMessage,
+
+            {
+
+                role: "Chimera",
+
+                content: ""
+
+            }
+
+        ]);
 
         setLoading(true);
 
         try {
 
-            const reply = await sendMessage(chatId, prompt);
+            await sendMessage(
 
-            setMessages(prev => [
+                chatId,
 
-                ...prev,
+                prompt,
 
-                {
+                (partialResponse) => {
 
-                    role: "Chimera",
+                    setMessages(prev => {
 
-                    content: reply,
+                        const updated = [...prev];
+
+                        updated[assistantIndex] = {
+
+                            role: "Chimera",
+
+                            content: partialResponse,
+
+                        };
+
+                        return updated;
+
+                    });
 
                 }
 
-            ]);
+            );
 
         }
 
@@ -69,12 +137,6 @@ function Home() {
             setLoading(false);
 
         }
-
-    }
-
-    function reloadChats() {
-
-        setRefreshChats(prev => !prev);
 
     }
 
