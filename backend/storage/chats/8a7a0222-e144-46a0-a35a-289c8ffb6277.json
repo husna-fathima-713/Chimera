@@ -3,5 +3,14 @@
         "id": "8a7a0222-e144-46a0-a35a-289c8ffb6277",
         "title": "Testing Chat"
     },
-    "messages": []
+    "messages": [
+        {
+            "role": "user",
+            "content": "Explain blockchain in 5 points."
+        },
+        {
+            "role": "user",
+            "content": "Explain blockchain in 5 points."
+        }
+    ]
 }

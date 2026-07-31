@@ -37,7 +37,9 @@ class ChatService:
             print(f"\nChunk {i}")
             print(f"Source : {chunk['source']}")
             print(f"Chunk ID : {chunk['chunk_id']}\n")
+
             print(chunk["text"][:700])
+
             print("\n--------------------------")
 
         if context:
@@ -56,4 +58,20 @@ class ChatService:
                 }
             )
 
-        return self.model.stream(messages)
+        def response_generator():
+
+            full_response = ""
+
+            for chunk in self.model.stream(messages):
+
+                full_response += chunk
+
+                yield chunk
+
+            self.chat_manager.add_message(
+                chat_id,
+                "assistant",
+                full_response
+            )
+
+        return response_generator()
