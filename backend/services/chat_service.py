@@ -1,5 +1,6 @@
 from backend.models.manager import ModelManager
 from backend.services.chat_manager import ChatManager
+from backend.services.memory_service import MemoryService
 from backend.rag.retriever import Retriever
 
 
@@ -8,6 +9,7 @@ class ChatService:
     def __init__(self):
         self.model = ModelManager()
         self.chat_manager = ChatManager()
+        self.memory_service = MemoryService()
         self.retriever = Retriever()
 
     def create_chat(self, title="New Chat"):
@@ -28,6 +30,8 @@ class ChatService:
 
         context = self.retriever.search(prompt)
 
+        memories = self.memory_service.get_memories()
+
         print("\n==========================")
         print("RETRIEVED CHUNKS")
         print("==========================")
@@ -42,20 +46,50 @@ class ChatService:
 
             print("\n--------------------------")
 
+        system_prompt = ""
+
+        if memories:
+
+            system_prompt += (
+                "Known facts about the user:\n\n"
+            )
+
+            system_prompt += "\n".join(memories)
+
+            system_prompt += "\n\n"
+
         if context:
 
             context_text = "\n\n".join(
-                chunk["text"] for chunk in context
+
+                chunk["text"]
+
+                for chunk in context
+
             )
 
+            system_prompt += (
+
+                "Answer using the document context below.\n\n"
+
+                + context_text
+
+            )
+
+        if system_prompt:
+
             messages.insert(
+
                 0,
+
                 {
+
                     "role": "system",
-                    "content":
-                        "Answer ONLY using the document context below.\n\n"
-                        + context_text
+
+                    "content": system_prompt
+
                 }
+
             )
 
         def response_generator():
@@ -69,9 +103,13 @@ class ChatService:
                 yield chunk
 
             self.chat_manager.add_message(
+
                 chat_id,
+
                 "assistant",
+
                 full_response
+
             )
 
         return response_generator()
