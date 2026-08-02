@@ -2,6 +2,8 @@ import json
 from pathlib import Path
 
 from backend.models.manager import ModelManager
+from backend.rag.embeddings import EmbeddingModel
+from backend.services.memory_vector_store import MemoryVectorStore
 
 
 class MemoryManager:
@@ -12,6 +14,8 @@ class MemoryManager:
     def __init__(self):
 
         self.model = ModelManager()
+        self.embedder = EmbeddingModel()
+        self.vector_store = MemoryVectorStore()
 
         self.STORAGE_PATH.mkdir(
             parents=True,
@@ -57,27 +61,18 @@ class MemoryManager:
         extraction_prompt = [
 
             {
-
                 "role": "system",
-
                 "content":
-
                 (
                     "Extract ONE long-term user fact.\n"
-
                     "Return ONLY the fact.\n"
-
                     "If nothing should be remembered return NONE."
                 )
-
             },
 
             {
-
                 "role": "user",
-
                 "content": prompt
-
             }
 
         ]
@@ -87,7 +82,6 @@ class MemoryManager:
         ).strip()
 
         if fact.upper() == "NONE":
-
             return
 
         memories = self.load()
@@ -98,6 +92,18 @@ class MemoryManager:
 
             self.save(memories)
 
-    def get_memories(self):
+            embedding = self.embedder.encode(fact)
 
-        return self.load()
+            self.vector_store.add(
+                embedding,
+                fact
+            )
+
+    def retrieve(self, query, k=5):
+
+        embedding = self.embedder.encode(query)
+
+        return self.vector_store.search(
+            embedding,
+            k
+        )
