@@ -30,12 +30,15 @@ class ChatService:
 
         messages = self.chat_manager.get_messages(chat_id)
 
-        memories = self.memory_manager.get_memories()
+        memories = self.memory_manager.retrieve(
+            prompt,
+            k=5
+        )
 
         context = self.retriever.search(prompt)
 
         print("\n==========================")
-        print("USER MEMORIES")
+        print("RELEVANT MEMORIES")
         print("==========================")
 
         for memory in memories:
@@ -76,24 +79,18 @@ class ChatService:
             )
 
             system_prompt += (
-                "Answer using the following document context.\n\n"
+                "Use the following document context when answering.\n\n"
                 + context_text
             )
 
         if system_prompt:
 
             messages.insert(
-
                 0,
-
                 {
-
                     "role": "system",
-
                     "content": system_prompt
-
                 }
-
             )
 
         def response_generator():
@@ -107,13 +104,9 @@ class ChatService:
                 yield chunk
 
             self.chat_manager.add_message(
-
                 chat_id,
-
                 "assistant",
-
                 full_response
-
             )
 
         return response_generator()
