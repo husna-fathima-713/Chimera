@@ -2,6 +2,7 @@ from backend.models.manager import ModelManager
 from backend.services.chat_manager import ChatManager
 from backend.services.memory_manager import MemoryManager
 from backend.rag.retriever import Retriever
+from backend.tools.registry import ToolRegistry
 
 
 class ChatService:
@@ -11,6 +12,7 @@ class ChatService:
         self.chat_manager = ChatManager()
         self.memory_manager = MemoryManager()
         self.retriever = Retriever()
+        self.tool_registry = ToolRegistry()
 
     def create_chat(self, title="New Chat"):
         return self.chat_manager.create_chat(title)
@@ -81,7 +83,30 @@ class ChatService:
             system_prompt += (
                 "Use the following document context when answering.\n\n"
                 + context_text
+                + "\n\n"
             )
+
+        # ----------------------------
+        # Available Tools
+        # ----------------------------
+
+        tools = self.tool_registry.list_tools()
+
+        if tools:
+
+            system_prompt += (
+                "You have access to the following tools.\n"
+                "If one is useful, reply ONLY in this format:\n\n"
+                "TOOL: tool_name\n"
+                "INPUT: input\n\n"
+                "Available tools:\n"
+            )
+
+            for tool in tools:
+
+                system_prompt += (
+                    f"- {tool['name']}: {tool['description']}\n"
+                )
 
         if system_prompt:
 
