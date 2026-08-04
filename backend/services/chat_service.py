@@ -3,6 +3,7 @@ from backend.services.chat_manager import ChatManager
 from backend.services.memory_manager import MemoryManager
 from backend.rag.retriever import Retriever
 from backend.tools.registry import ToolRegistry
+from backend.agents.tool_agent import ToolAgent
 
 
 class ChatService:
@@ -13,6 +14,7 @@ class ChatService:
         self.memory_manager = MemoryManager()
         self.retriever = Retriever()
         self.tool_registry = ToolRegistry()
+        self.tool_agent = ToolAgent()
 
     def create_chat(self, title="New Chat"):
         return self.chat_manager.create_chat(title)
@@ -32,10 +34,31 @@ class ChatService:
 
         messages = self.chat_manager.get_messages(chat_id)
 
+        # ----------------------------
+        # Tool Agent
+        # ----------------------------
+
+        tool_result = self.tool_agent.process(prompt)
+
+        if tool_result:
+
+            print("\n==========================")
+            print("TOOL RESULT")
+            print("==========================")
+            print(tool_result)
+
+        # ----------------------------
+        # Memory
+        # ----------------------------
+
         memories = self.memory_manager.retrieve(
             prompt,
             k=5
         )
+
+        # ----------------------------
+        # RAG
+        # ----------------------------
 
         context = self.retriever.search(prompt)
 
@@ -62,22 +85,25 @@ class ChatService:
 
         system_prompt = ""
 
+        # ----------------------------
+        # Memories
+        # ----------------------------
+
         if memories:
 
             system_prompt += "Known facts about the user:\n\n"
-
             system_prompt += "\n".join(memories)
-
             system_prompt += "\n\n"
+
+        # ----------------------------
+        # Retrieved Documents
+        # ----------------------------
 
         if context:
 
             context_text = "\n\n".join(
-
                 chunk["text"]
-
                 for chunk in context
-
             )
 
             system_prompt += (
@@ -125,7 +151,6 @@ class ChatService:
             for chunk in self.model.stream(messages):
 
                 full_response += chunk
-
                 yield chunk
 
             self.chat_manager.add_message(
