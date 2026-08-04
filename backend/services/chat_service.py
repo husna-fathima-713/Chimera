@@ -34,70 +34,22 @@ class ChatService:
 
         messages = self.chat_manager.get_messages(chat_id)
 
-        # ----------------------------
-        # Tool Agent
-        # ----------------------------
-
         tool_result = self.tool_agent.process(prompt)
-
-        if tool_result:
-
-            print("\n==========================")
-            print("TOOL RESULT")
-            print("==========================")
-            print(tool_result)
-
-        # ----------------------------
-        # Memory
-        # ----------------------------
 
         memories = self.memory_manager.retrieve(
             prompt,
             k=5
         )
 
-        # ----------------------------
-        # RAG
-        # ----------------------------
-
         context = self.retriever.search(prompt)
 
-        print("\n==========================")
-        print("RELEVANT MEMORIES")
-        print("==========================")
-
-        for memory in memories:
-            print(memory)
-
-        print("\n==========================")
-        print("RETRIEVED CHUNKS")
-        print("==========================")
-
-        for i, chunk in enumerate(context, start=1):
-
-            print(f"\nChunk {i}")
-            print(f"Source : {chunk['source']}")
-            print(f"Chunk ID : {chunk['chunk_id']}\n")
-
-            print(chunk["text"][:700])
-
-            print("\n--------------------------")
-
         system_prompt = ""
-
-        # ----------------------------
-        # Memories
-        # ----------------------------
 
         if memories:
 
             system_prompt += "Known facts about the user:\n\n"
             system_prompt += "\n".join(memories)
             system_prompt += "\n\n"
-
-        # ----------------------------
-        # Retrieved Documents
-        # ----------------------------
 
         if context:
 
@@ -112,19 +64,21 @@ class ChatService:
                 + "\n\n"
             )
 
-        # ----------------------------
-        # Available Tools
-        # ----------------------------
+        if tool_result:
+
+            system_prompt += (
+                f"A tool has already been executed.\n"
+                f"Tool: {tool_result['tool']}\n"
+                f"Input: {tool_result['input']}\n"
+                f"Output: {tool_result['output']}\n\n"
+                "Use this result to answer the user naturally.\n\n"
+            )
 
         tools = self.tool_registry.list_tools()
 
         if tools:
 
             system_prompt += (
-                "You have access to the following tools.\n"
-                "If one is useful, reply ONLY in this format:\n\n"
-                "TOOL: tool_name\n"
-                "INPUT: input\n\n"
                 "Available tools:\n"
             )
 
