@@ -40,11 +40,18 @@ class ChatManager:
 
         for file in self.STORAGE_PATH.glob("*.json"):
 
-            with open(file, "r", encoding="utf-8") as f:
+            try:
 
-                data = json.load(f)
+                with open(file, "r", encoding="utf-8") as f:
 
-                chats.append(data["chat"])
+                    data = json.load(f)
+
+                if "chat" in data:
+                    chats.append(data["chat"])
+
+            except (json.JSONDecodeError, FileNotFoundError):
+
+                print(f"Skipping invalid chat file: {file}")
 
         return chats
 
@@ -55,9 +62,17 @@ class ChatManager:
         if not file_path.exists():
             return None
 
-        with open(file_path, "r", encoding="utf-8") as file:
+        try:
 
-            return json.load(file)
+            with open(file_path, "r", encoding="utf-8") as file:
+
+                return json.load(file)
+
+        except json.JSONDecodeError:
+
+            print(f"Corrupted chat file: {file_path}")
+
+            return None
 
     def delete_chat(self, chat_id):
 

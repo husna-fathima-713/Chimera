@@ -7,6 +7,14 @@
         {
             "role": "user",
             "content": "2+2"
+        },
+        {
+            "role": "user",
+            "content": "2+2"
+        },
+        {
+            "role": "assistant",
+            "content": "The result of 2 + 2 is **4**. \ud83d\ude0a"
         }
     ]
 }
