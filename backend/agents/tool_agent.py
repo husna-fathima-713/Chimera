@@ -12,7 +12,6 @@ class ToolAgent:
 
         prompt = prompt.strip()
 
-        # Calculator detection
         if re.fullmatch(r"[0-9+\-*/().\s]+", prompt):
 
             calculator = self.registry.get_tool("calculator")

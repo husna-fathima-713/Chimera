@@ -19,6 +19,11 @@ class ToolRegistry:
 
         return self.tools.get(name)
 
+    # Alias for future compatibility
+    def get_tool(self, name):
+
+        return self.get(name)
+
     def list_tools(self):
 
         return [
