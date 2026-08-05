@@ -1,39 +1,18 @@
-import re
-
 from backend.tools.registry import ToolRegistry
 
 
 class ToolAgent:
 
     def __init__(self):
+
         self.registry = ToolRegistry()
 
-    def process(self, prompt: str):
+    def execute(self, tool_name, tool_input):
 
-        prompt = prompt.strip()
+        tool = self.registry.get_tool(tool_name)
 
-        if re.fullmatch(r"[0-9+\-*/().\s]+", prompt):
+        if tool is None:
 
-            calculator = self.registry.get_tool("calculator")
+            return None
 
-            if calculator:
-
-                try:
-
-                    result = calculator.execute(prompt)
-
-                    return {
-                        "tool": "calculator",
-                        "input": prompt,
-                        "output": str(result)
-                    }
-
-                except Exception as e:
-
-                    return {
-                        "tool": "calculator",
-                        "input": prompt,
-                        "output": f"Error: {e}"
-                    }
-
-        return None
+        return tool.run(tool_input)
