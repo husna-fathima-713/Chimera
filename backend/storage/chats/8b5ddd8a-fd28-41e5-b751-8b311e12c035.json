@@ -31,6 +31,18 @@
         {
             "role": "assistant",
             "content": "TOOL: calculator\nINPUT: 2+8"
+        },
+        {
+            "role": "user",
+            "content": "2+8"
+        },
+        {
+            "role": "user",
+            "content": "calculate 2+2"
+        },
+        {
+            "role": "assistant",
+            "content": "The result of 2 + 2 is **4**. \n\nThis calculation was performed using the calculator tool."
         }
     ]
 }

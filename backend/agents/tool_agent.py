@@ -6,17 +6,16 @@ from backend.tools.registry import ToolRegistry
 class ToolAgent:
 
     def __init__(self):
-
         self.registry = ToolRegistry()
 
     def process(self, prompt):
 
-        expression = re.search(
-            r"(\d+[\+\-\*/]\d+)",
-            prompt.replace(" ", "")
+        expression = re.fullmatch(
+            r"\s*([0-9+\-*/().%\s]+)\s*",
+            prompt
         )
 
-        if not expression:
+        if expression is None:
             return None
 
         tool = self.registry.get("calculator")
@@ -24,10 +23,12 @@ class ToolAgent:
         if tool is None:
             return None
 
-        output = tool.run(expression.group(1))
+        output = tool.execute(
+            expression.group(1)
+        )
 
         return {
-            "tool": tool.name,
+            "tool": "calculator",
             "input": expression.group(1),
             "output": output
         }
