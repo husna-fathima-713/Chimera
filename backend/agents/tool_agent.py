@@ -1,3 +1,5 @@
+import re
+
 from backend.tools.registry import ToolRegistry
 
 
@@ -7,12 +9,25 @@ class ToolAgent:
 
         self.registry = ToolRegistry()
 
-    def execute(self, tool_name, tool_input):
+    def process(self, prompt):
 
-        tool = self.registry.get_tool(tool_name)
+        expression = re.search(
+            r"(\d+[\+\-\*/]\d+)",
+            prompt.replace(" ", "")
+        )
 
-        if tool is None:
-
+        if not expression:
             return None
 
-        return tool.run(tool_input)
+        tool = self.registry.get("calculator")
+
+        if tool is None:
+            return None
+
+        output = tool.run(expression.group(1))
+
+        return {
+            "tool": tool.name,
+            "input": expression.group(1),
+            "output": output
+        }

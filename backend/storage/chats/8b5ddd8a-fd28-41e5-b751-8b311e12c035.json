@@ -23,6 +23,14 @@
         {
             "role": "assistant",
             "content": "The result of 3 + 3 is **6**. \ud83d\ude0a"
+        },
+        {
+            "role": "user",
+            "content": "2+8"
+        },
+        {
+            "role": "assistant",
+            "content": "TOOL: calculator\nINPUT: 2+8"
         }
     ]
 }
