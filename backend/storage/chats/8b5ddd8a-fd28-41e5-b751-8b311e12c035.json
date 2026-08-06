@@ -67,6 +67,22 @@
         {
             "role": "assistant",
             "content": "from backend.tools.base import BaseTool\n\n\nclass CalculatorTool(BaseTool):\n\n    name = \"calculator\"\n\n    description = (\n        \"Evaluate simple mathematical expressions.\"\n    )\n\n    def execute(self, expression):\n\n        allowed = (\n            \"0123456789\"\n            \"+-*/(). %\"\n        )\n\n        if any(\n            char not in allowed\n            for char in expression\n        ):\n            raise ValueError(\n                \"Invalid expression.\"\n            )\n\n        return str(\n            eval(\n                expression,\n                {\n                    \"__builtins__\": {}\n                },\n                {}\n            )\n        )"
+        },
+        {
+            "role": "user",
+            "content": "2+5"
+        },
+        {
+            "role": "assistant",
+            "content": "7"
+        },
+        {
+            "role": "user",
+            "content": "Read backend/main.py"
+        },
+        {
+            "role": "assistant",
+            "content": "from fastapi import FastAPI\nfrom fastapi.middleware.cors import CORSMiddleware\n\nfrom backend.api.routes.health import router as health_router\nfrom backend.api.routes.chat import router as chat_router\nfrom backend.api.routes.chats import router as chats_router\nfrom backend.api.routes.documents import router as documents_router\n\napp = FastAPI(title=\"Chimera\")\n\napp.add_middleware(\n    CORSMiddleware,\n    allow_origins=[\n        \"http://localhost:5173\",\n        \"http://127.0.0.1:5173\",\n    ],\n    allow_credentials=True,\n    allow_methods=[\"*\"],\n    allow_headers=[\"*\"],\n)\n\napp.include_router(health_router)\napp.include_router(chat_router)\napp.include_router(chats_router)\napp.include_router(documents_router)\n\n\n@app.get(\"/\")\ndef root():\n    return {\n        \"message\": \"Welcome to Chimera API\"\n    }"
         }
     ]
 }

@@ -56,6 +56,12 @@ class ToolRegistry:
 
         return self.tools.get(name)
 
+    def get_all(self):
+
+        return list(
+            self.tools.values()
+        )
+
     def list_tools(self):
 
         return [

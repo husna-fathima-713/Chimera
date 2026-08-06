@@ -7,8 +7,15 @@ class BaseTool(ABC):
     description = ""
 
     @abstractmethod
+    def can_handle(self, prompt):
+        """
+        Returns True if this tool can handle the prompt.
+        """
+        pass
+
+    @abstractmethod
     def execute(self, input_data):
         """
-        Execute the tool.
+        Executes the tool.
         """
         pass
