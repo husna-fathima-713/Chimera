@@ -4,6 +4,8 @@ import pkgutil
 
 import backend.tools
 
+from backend.tools.base import BaseTool
+
 
 class ToolRegistry:
 
@@ -21,7 +23,10 @@ class ToolRegistry:
             package.__path__
         ):
 
-            if module_name == "registry":
+            if module_name in (
+                "registry",
+                "base"
+            ):
                 continue
 
             module = importlib.import_module(
@@ -34,9 +39,9 @@ class ToolRegistry:
             ):
 
                 if (
-                    hasattr(obj, "name")
-                    and hasattr(obj, "description")
-                    and hasattr(obj, "execute")
+                    inspect.isclass(obj)
+                    and issubclass(obj, BaseTool)
+                    and obj is not BaseTool
                 ):
 
                     instance = obj()

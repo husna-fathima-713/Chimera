@@ -1,4 +1,7 @@
-class CalculatorTool:
+from backend.tools.base import BaseTool
+
+
+class CalculatorTool(BaseTool):
 
     name = "calculator"
 
