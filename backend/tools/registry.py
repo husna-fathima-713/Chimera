@@ -1,4 +1,8 @@
-from backend.tools.calculator import CalculatorTool
+import importlib
+import inspect
+import pkgutil
+
+import backend.tools
 
 
 class ToolRegistry:
@@ -7,9 +11,37 @@ class ToolRegistry:
 
         self.tools = {}
 
-        self.register(
-            CalculatorTool()
-        )
+        self._discover_tools()
+
+    def _discover_tools(self):
+
+        package = backend.tools
+
+        for _, module_name, _ in pkgutil.iter_modules(
+            package.__path__
+        ):
+
+            if module_name == "registry":
+                continue
+
+            module = importlib.import_module(
+                f"backend.tools.{module_name}"
+            )
+
+            for _, obj in inspect.getmembers(
+                module,
+                inspect.isclass
+            ):
+
+                if (
+                    hasattr(obj, "name")
+                    and hasattr(obj, "description")
+                    and hasattr(obj, "execute")
+                ):
+
+                    instance = obj()
+
+                    self.register(instance)
 
     def register(self, tool):
 
@@ -18,11 +50,6 @@ class ToolRegistry:
     def get(self, name):
 
         return self.tools.get(name)
-
-    # Alias for future compatibility
-    def get_tool(self, name):
-
-        return self.get(name)
 
     def list_tools(self):
 
