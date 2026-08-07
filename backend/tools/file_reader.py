@@ -22,6 +22,20 @@ class FileReaderTool(BaseTool):
 
         )
 
+    def prepare_input(self, prompt):
+
+        match = re.search(
+
+            r"(?:read|open|show)\s+(.+)",
+
+            prompt,
+
+            re.IGNORECASE
+
+        )
+
+        return match.group(1).strip()
+
     def execute(self, filepath):
 
         path = Path(filepath)
@@ -33,9 +47,11 @@ class FileReaderTool(BaseTool):
             return "Path is a directory."
 
         try:
+
             return path.read_text(
                 encoding="utf-8"
             )
 
         except Exception as e:
+
             return f"Error: {e}"

@@ -20,12 +20,13 @@ class CalculatorTool(BaseTool):
 
         )
 
+    def prepare_input(self, prompt):
+
+        return prompt.strip()
+
     def execute(self, expression):
 
-        allowed = (
-            "0123456789"
-            "+-*/(). %"
-        )
+        allowed = "0123456789+-*/(). %"
 
         if any(
             c not in allowed

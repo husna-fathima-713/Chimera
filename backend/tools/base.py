@@ -8,14 +8,16 @@ class BaseTool(ABC):
 
     @abstractmethod
     def can_handle(self, prompt):
+        pass
+
+    @abstractmethod
+    def prepare_input(self, prompt):
         """
-        Returns True if this tool can handle the prompt.
+        Convert the user's prompt into the
+        input required by execute().
         """
         pass
 
     @abstractmethod
     def execute(self, input_data):
-        """
-        Executes the tool.
-        """
         pass
