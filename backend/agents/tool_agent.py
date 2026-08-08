@@ -1,5 +1,3 @@
-import re
-
 from backend.tools.registry import ToolRegistry
 
 
@@ -11,28 +9,92 @@ class ToolAgent:
 
     def process(self, prompt):
 
-        tools = self.registry.tools.values()
+        prompt = prompt.strip()
+
+        tools = list(
+            self.registry.tools.values()
+        )
+
+        matched_tools = []
 
         for tool in tools:
 
-            if not tool.can_handle(prompt):
+            try:
+
+                if tool.can_handle(prompt):
+
+                    matched_tools.append(tool)
+
+            except Exception:
 
                 continue
 
-            tool_input = tool.prepare_input(prompt)
+        if not matched_tools:
 
-            try:
+            return None
 
-                output = tool.execute(tool_input)
+        tool = self._select_tool(
+            prompt,
+            matched_tools
+        )
 
-            except Exception as e:
+        tool_input = tool.prepare_input(prompt)
 
-                output = f"Tool execution failed: {e}"
+        try:
 
-            return {
-                "tool": tool.name,
-                "input": tool_input,
-                "output": output
-            }
+            output = tool.execute(tool_input)
 
-        return None
+        except Exception as e:
+
+            output = f"Tool execution failed: {e}"
+
+        return {
+            "tool": tool.name,
+            "input": tool_input,
+            "output": output
+        }
+
+    def _select_tool(self, prompt, tools):
+
+        prompt_lower = prompt.lower()
+
+        # Prefer code search when the user
+        # explicitly asks to search inside code.
+        if any(
+            phrase in prompt_lower
+            for phrase in (
+                "search code",
+                "search inside",
+                "inside the code",
+                "find function",
+                "find class",
+                "find def"
+            )
+        ):
+
+            for tool in tools:
+
+                if tool.name == "code_search":
+
+                    return tool
+
+        # Prefer file search when the user
+        # is looking for a filename.
+        if any(
+            phrase in prompt_lower
+            for phrase in (
+                "find file",
+                "find filename",
+                "locate file",
+                "locate filename"
+            )
+        ):
+
+            for tool in tools:
+
+                if tool.name == "search":
+
+                    return tool
+
+        # Otherwise preserve registry order.
+        return tools[0]
