@@ -1,3 +1,5 @@
+import re
+
 from backend.tools.registry import ToolRegistry
 
 
@@ -9,26 +11,28 @@ class ToolAgent:
 
     def process(self, prompt):
 
-        for tool in self.registry.get_all():
+        tools = self.registry.tools.values()
 
-            if tool.can_handle(prompt):
+        for tool in tools:
 
-                input_data = tool.prepare_input(
-                    prompt
-                )
+            if not tool.can_handle(prompt):
 
-                output = tool.execute(
-                    input_data
-                )
+                continue
 
-                return {
+            tool_input = tool.prepare_input(prompt)
 
-                    "tool": tool.name,
+            try:
 
-                    "input": input_data,
+                output = tool.execute(tool_input)
 
-                    "output": output
+            except Exception as e:
 
-                }
+                output = f"Tool execution failed: {e}"
+
+            return {
+                "tool": tool.name,
+                "input": tool_input,
+                "output": output
+            }
 
         return None
