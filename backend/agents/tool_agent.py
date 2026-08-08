@@ -38,28 +38,12 @@ class ToolAgent:
             matched_tools
         )
 
-        tool_input = tool.prepare_input(prompt)
-
-        try:
-
-            output = tool.execute(tool_input)
-
-        except Exception as e:
-
-            output = f"Tool execution failed: {e}"
-
-        return {
-            "tool": tool.name,
-            "input": tool_input,
-            "output": output
-        }
+        return tool.run(prompt)
 
     def _select_tool(self, prompt, tools):
 
         prompt_lower = prompt.lower()
 
-        # Prefer code search when the user
-        # explicitly asks to search inside code.
         if any(
             phrase in prompt_lower
             for phrase in (
@@ -78,8 +62,6 @@ class ToolAgent:
 
                     return tool
 
-        # Prefer file search when the user
-        # is looking for a filename.
         if any(
             phrase in prompt_lower
             for phrase in (
@@ -96,5 +78,4 @@ class ToolAgent:
 
                     return tool
 
-        # Otherwise preserve registry order.
         return tools[0]
