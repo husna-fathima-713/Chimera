@@ -2,7 +2,6 @@ from backend.models.manager import ModelManager
 from backend.services.chat_manager import ChatManager
 from backend.services.memory_manager import MemoryManager
 from backend.rag.retriever import Retriever
-from backend.tools.registry import ToolRegistry
 from backend.agents.tool_agent import ToolAgent
 
 
@@ -13,7 +12,6 @@ class ChatService:
         self.chat_manager = ChatManager()
         self.memory_manager = MemoryManager()
         self.retriever = Retriever()
-        self.tool_registry = ToolRegistry()
         self.tool_agent = ToolAgent()
 
     def create_chat(self, title="New Chat"):
@@ -32,41 +30,51 @@ class ChatService:
 
         self.memory_manager.remember(prompt)
 
-        # -----------------------------
-        # Execute Tool First
-        # -----------------------------
-        tool_result = self.tool_agent.process(prompt)
+        messages = self.chat_manager.get_messages(
+            chat_id
+        )
 
-        if tool_result:
+        # ----------------------------
+        # Tool execution
+        # ----------------------------
 
-            response = str(tool_result["output"])
+        tool_result = self.tool_agent.process(
+            prompt
+        )
 
-            self.chat_manager.add_message(
-                chat_id,
-                "assistant",
-                response
-            )
-
-            def generator():
-                yield response
-
-            return generator()
-
-        messages = self.chat_manager.get_messages(chat_id)
+        # ----------------------------
+        # Memory retrieval
+        # ----------------------------
 
         memories = self.memory_manager.retrieve(
             prompt,
             k=5
         )
 
-        context = self.retriever.search(prompt)
+        # ----------------------------
+        # Document retrieval
+        # ----------------------------
+
+        context = self.retriever.search(
+            prompt
+        )
+
+        # ----------------------------
+        # Build system context
+        # ----------------------------
 
         system_prompt = ""
 
         if memories:
 
-            system_prompt += "Known facts about the user:\n\n"
-            system_prompt += "\n".join(memories)
+            system_prompt += (
+                "Known facts about the user:\n\n"
+            )
+
+            system_prompt += (
+                "\n".join(memories)
+            )
+
             system_prompt += "\n\n"
 
         if context:
@@ -77,21 +85,43 @@ class ChatService:
             )
 
             system_prompt += (
-                "Use the following document context when answering.\n\n"
+                "Use the following document context "
+                "when answering.\n\n"
                 + context_text
+                + "\n\n"
             )
 
-        tools = self.tool_registry.list_tools()
+        # ----------------------------
+        # Tool result
+        # ----------------------------
 
-        if tools:
+        if tool_result:
 
-            system_prompt += "\n\nAvailable tools:\n"
-
-            for tool in tools:
+            if tool_result["success"]:
 
                 system_prompt += (
-                    f"- {tool['name']}: {tool['description']}\n"
+                    "A tool has been executed.\n\n"
+                    f"Tool: {tool_result['tool']}\n"
+                    f"Input: {tool_result['input']}\n"
+                    f"Output: {tool_result['output']}\n\n"
+                    "Use the tool output to answer "
+                    "the user's request naturally.\n\n"
                 )
+
+            else:
+
+                system_prompt += (
+                    "A tool execution failed.\n\n"
+                    f"Tool: {tool_result['tool']}\n"
+                    f"Input: {tool_result['input']}\n"
+                    f"Error: {tool_result['output']}\n\n"
+                    "Explain the failure clearly if "
+                    "it is relevant to the user.\n\n"
+                )
+
+        # ----------------------------
+        # System message
+        # ----------------------------
 
         if system_prompt:
 
@@ -103,13 +133,20 @@ class ChatService:
                 }
             )
 
+        # ----------------------------
+        # Stream model response
+        # ----------------------------
+
         def response_generator():
 
             full_response = ""
 
-            for chunk in self.model.stream(messages):
+            for chunk in self.model.stream(
+                messages
+            ):
 
                 full_response += chunk
+
                 yield chunk
 
             self.chat_manager.add_message(
