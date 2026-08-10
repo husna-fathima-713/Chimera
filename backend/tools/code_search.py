@@ -69,3 +69,5 @@ class CodeSearchTool(BaseTool):
             return "No matches found."
 
         return "\n".join(results[:100])
+
+    
