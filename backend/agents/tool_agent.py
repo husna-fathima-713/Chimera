@@ -1,38 +1,57 @@
+import re
+
 from backend.tools.registry import ToolRegistry
 
 
 class ToolAgent:
 
     def __init__(self):
+
         self.registry = ToolRegistry()
 
     def process(self, prompt):
 
-        tool_name = None
-        tool_input = None
-
-        lines = prompt.strip().splitlines()
-
-        for line in lines:
-
-            if line.upper().startswith("TOOL:"):
-                tool_name = line.split(":", 1)[1].strip()
-
-            elif line.upper().startswith("INPUT:"):
-                tool_input = line.split(":", 1)[1].strip()
-
-        if not tool_name or tool_input is None:
+        if not prompt:
             return None
+
+        tool_match = re.search(
+            r"TOOL:\s*([a-zA-Z0-9_]+)",
+            prompt,
+            re.IGNORECASE
+        )
+
+        input_match = re.search(
+            r"INPUT:\s*(.*)",
+            prompt,
+            re.IGNORECASE | re.DOTALL
+        )
+
+        if not tool_match:
+            return None
+
+        tool_name = tool_match.group(1).strip()
 
         tool = self.registry.get(tool_name)
 
         if tool is None:
-
             return {
                 "success": False,
                 "tool": tool_name,
-                "input": tool_input,
-                "output": f"Tool '{tool_name}' not found."
+                "input": None,
+                "output": f"Unknown tool: {tool_name}"
+            }
+
+        tool_input = ""
+
+        if input_match:
+            tool_input = input_match.group(1).strip()
+
+        if not tool_input:
+            return {
+                "success": False,
+                "tool": tool_name,
+                "input": "",
+                "output": "Tool input is required."
             }
 
         try:
@@ -46,11 +65,11 @@ class ToolAgent:
                 "output": output
             }
 
-        except Exception as e:
+        except Exception as exc:
 
             return {
                 "success": False,
                 "tool": tool_name,
                 "input": tool_input,
-                "output": str(e)
+                "output": str(exc)
             }
