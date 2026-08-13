@@ -34,6 +34,7 @@ class ToolAgent:
         tool = self.registry.get(tool_name)
 
         if tool is None:
+
             return {
                 "success": False,
                 "tool": tool_name,
@@ -44,9 +45,11 @@ class ToolAgent:
         tool_input = ""
 
         if input_match:
+
             tool_input = input_match.group(1).strip()
 
         if not tool_input:
+
             return {
                 "success": False,
                 "tool": tool_name,
