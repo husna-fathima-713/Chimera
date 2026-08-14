@@ -39,8 +39,7 @@ class ToolRegistry:
             ):
 
                 if (
-                    inspect.isclass(obj)
-                    and issubclass(obj, BaseTool)
+                    issubclass(obj, BaseTool)
                     and obj is not BaseTool
                 ):
 
@@ -50,27 +49,27 @@ class ToolRegistry:
 
     def register(self, tool):
 
+        if not isinstance(tool, BaseTool):
+            raise TypeError(
+                "Tool must inherit from BaseTool."
+            )
+
         self.tools[tool.name] = tool
 
     def get(self, name):
 
         return self.tools.get(name)
 
-    def get_all(self):
-
-        return list(
-            self.tools.values()
-        )
-
     def list_tools(self):
 
         return [
-
             {
                 "name": tool.name,
                 "description": tool.description
             }
-
             for tool in self.tools.values()
-
         ]
+
+    def has(self, name):
+
+        return name in self.tools
