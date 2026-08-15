@@ -31,9 +31,7 @@ class ToolAgent:
 
         tool_name = tool_match.group(1).strip()
 
-        tool = self.registry.get(tool_name)
-
-        if tool is None:
+        if not self.registry.has(tool_name):
 
             return {
                 "success": False,
@@ -42,10 +40,11 @@ class ToolAgent:
                 "output": f"Unknown tool: {tool_name}"
             }
 
+        tool = self.registry.get(tool_name)
+
         tool_input = ""
 
         if input_match:
-
             tool_input = input_match.group(1).strip()
 
         if not tool_input:
