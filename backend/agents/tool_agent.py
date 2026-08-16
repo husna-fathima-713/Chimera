@@ -1,4 +1,5 @@
 import re
+from datetime import datetime, timezone
 
 from backend.tools.registry import ToolRegistry
 
@@ -33,12 +34,16 @@ class ToolAgent:
 
         if not self.registry.has(tool_name):
 
-            return {
+            result = {
                 "success": False,
                 "tool": tool_name,
                 "input": None,
                 "output": f"Unknown tool: {tool_name}"
             }
+
+            self._log_result(result)
+
+            return result
 
         tool = self.registry.get(tool_name)
 
@@ -49,11 +54,35 @@ class ToolAgent:
 
         if not tool_input:
 
-            return {
+            result = {
                 "success": False,
                 "tool": tool_name,
                 "input": "",
                 "output": "Tool input is required."
             }
 
-        return tool.run(tool_input)
+            self._log_result(result)
+
+            return result
+
+        result = tool.run(tool_input)
+
+        self._log_result(result)
+
+        return result
+
+    def _log_result(self, result):
+
+        timestamp = datetime.now(
+            timezone.utc
+        ).isoformat()
+
+        status = "SUCCESS" if result["success"] else "FAILED"
+
+        print(
+            f"[TOOL {status}] "
+            f"{timestamp} | "
+            f"{result['tool']} | "
+            f"input={result['input']!r} | "
+            f"output={result['output']!r}"
+        )
