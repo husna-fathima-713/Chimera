@@ -2,22 +2,28 @@ from backend.models.manager import ModelManager
 from backend.services.chat_manager import ChatManager
 from backend.services.memory_manager import MemoryManager
 from backend.rag.retriever import Retriever
-from backend.agents.tool_agent import ToolAgent
+from backend.tools.registry import ToolRegistry
+from backend.services.tool_service import ToolService
 
 
 class ChatService:
 
     def __init__(self):
+
         self.model = ModelManager()
         self.chat_manager = ChatManager()
         self.memory_manager = MemoryManager()
         self.retriever = Retriever()
-        self.tool_agent = ToolAgent()
+
+        self.tool_registry = ToolRegistry()
+        self.tool_service = ToolService()
 
     def create_chat(self, title="New Chat"):
+
         return self.chat_manager.create_chat(title)
 
     def index_document(self, filepath):
+
         self.retriever.index_document(filepath)
 
     def chat(self, chat_id, prompt):
@@ -34,34 +40,18 @@ class ChatService:
             chat_id
         )
 
-        # ----------------------------
-        # Tool execution
-        # ----------------------------
-
-        tool_result = self.tool_agent.process(
+        tool_result = self.tool_service.process(
             prompt
         )
-
-        # ----------------------------
-        # Memory retrieval
-        # ----------------------------
 
         memories = self.memory_manager.retrieve(
             prompt,
             k=5
         )
 
-        # ----------------------------
-        # Document retrieval
-        # ----------------------------
-
         context = self.retriever.search(
             prompt
         )
-
-        # ----------------------------
-        # Build system context
-        # ----------------------------
 
         system_prompt = ""
 
@@ -71,8 +61,8 @@ class ChatService:
                 "Known facts about the user:\n\n"
             )
 
-            system_prompt += (
-                "\n".join(memories)
+            system_prompt += "\n".join(
+                memories
             )
 
             system_prompt += "\n\n"
@@ -85,43 +75,36 @@ class ChatService:
             )
 
             system_prompt += (
-                "Use the following document context "
-                "when answering.\n\n"
+                "Use the following document "
+                "context when answering.\n\n"
                 + context_text
                 + "\n\n"
             )
 
-        # ----------------------------
-        # Tool result
-        # ----------------------------
-
         if tool_result:
 
-            if tool_result["success"]:
+            system_prompt += (
+                "A tool has already been executed.\n"
+                f"Tool: {tool_result['tool']}\n"
+                f"Input: {tool_result['input']}\n"
+                f"Success: {tool_result['success']}\n"
+                f"Output: {tool_result['output']}\n\n"
+                "Use this result to answer the "
+                "user naturally.\n\n"
+            )
+
+        tools = self.tool_registry.list_tools()
+
+        if tools:
+
+            system_prompt += "Available tools:\n"
+
+            for tool in tools:
 
                 system_prompt += (
-                    "A tool has been executed.\n\n"
-                    f"Tool: {tool_result['tool']}\n"
-                    f"Input: {tool_result['input']}\n"
-                    f"Output: {tool_result['output']}\n\n"
-                    "Use the tool output to answer "
-                    "the user's request naturally.\n\n"
+                    f"- {tool['name']}: "
+                    f"{tool['description']}\n"
                 )
-
-            else:
-
-                system_prompt += (
-                    "A tool execution failed.\n\n"
-                    f"Tool: {tool_result['tool']}\n"
-                    f"Input: {tool_result['input']}\n"
-                    f"Error: {tool_result['output']}\n\n"
-                    "Explain the failure clearly if "
-                    "it is relevant to the user.\n\n"
-                )
-
-        # ----------------------------
-        # System message
-        # ----------------------------
 
         if system_prompt:
 
@@ -132,10 +115,6 @@ class ChatService:
                     "content": system_prompt
                 }
             )
-
-        # ----------------------------
-        # Stream model response
-        # ----------------------------
 
         def response_generator():
 
