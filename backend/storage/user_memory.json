@@ -1,4 +1,8 @@
 [
     "2 + 5 = 7",
+<<<<<<< HEAD
     "2 + 8 = 10"
+=======
+    "TCP (Transmission Control Protocol) is a connection-oriented protocol that ensures reliable, ordered, and error-checked delivery of data between applications."
+>>>>>>> efcf762bcdb7544d5fa4f6aa3a8378612773836b
 ]

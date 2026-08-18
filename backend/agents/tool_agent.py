@@ -4,78 +4,53 @@ from backend.tools.registry import ToolRegistry
 class ToolAgent:
 
     def __init__(self):
-
         self.registry = ToolRegistry()
 
     def process(self, prompt):
 
-        prompt = prompt.strip()
+        tool_name = None
+        tool_input = None
 
-        tools = list(
-            self.registry.tools.values()
-        )
+        lines = prompt.strip().splitlines()
 
-        matched_tools = []
+        for line in lines:
 
-        for tool in tools:
+            if line.upper().startswith("TOOL:"):
+                tool_name = line.split(":", 1)[1].strip()
 
-            try:
+            elif line.upper().startswith("INPUT:"):
+                tool_input = line.split(":", 1)[1].strip()
 
-                if tool.can_handle(prompt):
-
-                    matched_tools.append(tool)
-
-            except Exception:
-
-                continue
-
-        if not matched_tools:
-
+        if not tool_name or tool_input is None:
             return None
 
-        tool = self._select_tool(
-            prompt,
-            matched_tools
-        )
+        tool = self.registry.get(tool_name)
 
-        return tool.run(prompt)
+        if tool is None:
 
-    def _select_tool(self, prompt, tools):
+            return {
+                "success": False,
+                "tool": tool_name,
+                "input": tool_input,
+                "output": f"Tool '{tool_name}' not found."
+            }
 
-        prompt_lower = prompt.lower()
+        try:
 
-        if any(
-            phrase in prompt_lower
-            for phrase in (
-                "search code",
-                "search inside",
-                "inside the code",
-                "find function",
-                "find class",
-                "find def"
-            )
-        ):
+            output = tool.run(tool_input)
 
-            for tool in tools:
+            return {
+                "success": True,
+                "tool": tool_name,
+                "input": tool_input,
+                "output": output
+            }
 
-                if tool.name == "code_search":
+        except Exception as e:
 
-                    return tool
-
-        if any(
-            phrase in prompt_lower
-            for phrase in (
-                "find file",
-                "find filename",
-                "locate file",
-                "locate filename"
-            )
-        ):
-
-            for tool in tools:
-
-                if tool.name == "search":
-
-                    return tool
-
-        return tools[0]
+            return {
+                "success": False,
+                "tool": tool_name,
+                "input": tool_input,
+                "output": str(e)
+            }
