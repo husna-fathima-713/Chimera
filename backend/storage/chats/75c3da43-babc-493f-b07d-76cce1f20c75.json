@@ -3,5 +3,18 @@
         "id": "75c3da43-babc-493f-b07d-76cce1f20c75",
         "title": "Testing Chat"
     },
-    "messages": []
+    "messages": [
+        {
+            "role": "user",
+            "content": "2+8"
+        },
+        {
+            "role": "user",
+            "content": "2+8"
+        },
+        {
+            "role": "assistant",
+            "content": "2 + 8 = 10"
+        }
+    ]
 }
