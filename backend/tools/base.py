@@ -1,38 +1,33 @@
-class BaseTool:
+from abc import ABC, abstractmethod
+
+
+class BaseTool(ABC):
 
     name = ""
     description = ""
 
-    def can_handle(self, prompt):
-        return False
-
-    def prepare_input(self, prompt):
-        return prompt
-
-    def execute(self, tool_input):
-        raise NotImplementedError(
-            "Tool must implement execute()."
-        )
-
     def run(self, prompt):
-        tool_input = self.prepare_input(prompt)
 
         try:
 
-            output = self.execute(tool_input)
+            result = self.execute(prompt)
 
             return {
                 "success": True,
                 "tool": self.name,
-                "input": tool_input,
-                "output": output
+                "input": prompt,
+                "output": result
             }
 
-        except Exception as e:
+        except Exception as exc:
 
             return {
                 "success": False,
                 "tool": self.name,
-                "input": tool_input,
-                "output": str(e)
+                "input": prompt,
+                "output": str(exc)
             }
+
+    @abstractmethod
+    def execute(self, prompt):
+        pass

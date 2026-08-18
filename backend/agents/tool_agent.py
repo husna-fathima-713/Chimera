@@ -57,22 +57,4 @@ class ToolAgent:
                 "output": "Tool input is required."
             }
 
-        try:
-
-            output = tool.run(tool_input)
-
-            return {
-                "success": True,
-                "tool": tool_name,
-                "input": tool_input,
-                "output": output
-            }
-
-        except Exception as exc:
-
-            return {
-                "success": False,
-                "tool": tool_name,
-                "input": tool_input,
-                "output": str(exc)
-            }
+        return tool.run(tool_input)
