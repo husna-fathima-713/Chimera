@@ -1,14 +1,14 @@
 import re
 from datetime import datetime, timezone
 
-from backend.tools.registry import ToolRegistry
+from backend.agents.tool_selector import ToolSelector
 
 
 class ToolAgent:
 
     def __init__(self):
 
-        self.registry = ToolRegistry()
+        self.selector = ToolSelector()
 
     def process(self, prompt):
 
@@ -23,7 +23,9 @@ class ToolAgent:
         tool_name = tool_request["tool"]
         tool_input = tool_request["input"]
 
-        if not self.registry.has(tool_name):
+        tool = self.selector.select(tool_name)
+
+        if tool is None:
 
             result = {
                 "success": False,
@@ -48,8 +50,6 @@ class ToolAgent:
             self._log_result(result)
 
             return result
-
-        tool = self.registry.get(tool_name)
 
         result = tool.run(tool_input)
 
