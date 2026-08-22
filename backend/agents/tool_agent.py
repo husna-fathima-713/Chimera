@@ -51,7 +51,18 @@ class ToolAgent:
 
             return result
 
-        result = tool.run(tool_input)
+        try:
+
+            result = tool.run(tool_input)
+
+        except Exception as error:
+
+            result = {
+                "success": False,
+                "tool": tool_name,
+                "input": tool_input,
+                "output": f"Tool execution failed: {error}"
+            }
 
         self._log_result(result)
 
