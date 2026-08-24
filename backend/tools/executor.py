@@ -43,3 +43,7 @@ class ToolExecutor:
                 "input": tool_input,
                 "output": f"Tool execution failed: {error}"
             }
+
+    def list_tools(self):
+
+        return self.registry.list_tools()
