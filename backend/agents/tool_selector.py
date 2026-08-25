@@ -12,12 +12,9 @@ class ToolSelector:
         if not tool_name:
             return None
 
-        tool_name = tool_name.strip()
-
-        if not self.registry.has(tool_name):
-            return None
-
-        return self.registry.get(tool_name)
+        return self.registry.get(
+            tool_name.strip()
+        )
 
     def available_tools(self):
 
