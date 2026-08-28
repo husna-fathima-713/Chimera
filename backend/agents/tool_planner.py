@@ -19,24 +19,63 @@ class ToolPlanner:
         for tool in tools:
 
             name = tool["name"].lower()
-            description = tool["description"].lower()
 
             if name in prompt_lower:
+
                 return {
                     "tool": tool["name"],
-                    "reason": "Tool name mentioned in request."
+                    "input": prompt.strip(),
+                    "reason": "Tool name explicitly mentioned.",
+                    "confidence": 1.0
                 }
 
-            if (
-                name == "calculator"
-                and any(
-                    operator in prompt
-                    for operator in ["+", "-", "*", "/", "%"]
-                )
-            ):
+        if self._looks_like_calculation(prompt):
+
+            calculator = self.selector.select(
+                "calculator"
+            )
+
+            if calculator:
+
                 return {
-                    "tool": tool["name"],
-                    "reason": "Mathematical expression detected."
+                    "tool": "calculator",
+                    "input": self._extract_calculation(prompt),
+                    "reason": "Mathematical expression detected.",
+                    "confidence": 0.9
                 }
 
         return None
+
+    def _looks_like_calculation(self, prompt):
+
+        operators = (
+            "+",
+            "-",
+            "*",
+            "/",
+            "%"
+        )
+
+        return (
+            any(operator in prompt for operator in operators)
+            and any(char.isdigit() for char in prompt)
+        )
+
+    def _extract_calculation(self, prompt):
+
+        expression = ""
+
+        for char in prompt:
+
+            if (
+                char.isdigit()
+                or char in "+-*/().%"
+                or char.isspace()
+            ):
+                expression += char
+
+        return expression.strip()
+
+    def available_tools(self):
+
+        return self.selector.available_tools()

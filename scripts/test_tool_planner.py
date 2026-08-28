@@ -11,6 +11,8 @@ def test_calculator_detection():
 
     assert result is not None
     assert result["tool"] == "calculator"
+    assert result["input"] == "25 * 4"
+    assert result["confidence"] == 0.9
 
     print("PASS: calculator detection")
 
@@ -25,6 +27,7 @@ def test_explicit_tool():
 
     assert result is not None
     assert result["tool"] == "calculator"
+    assert result["confidence"] == 1.0
 
     print("PASS: explicit tool detection")
 
@@ -42,11 +45,24 @@ def test_no_tool():
     print("PASS: no-tool detection")
 
 
+def test_available_tools():
+
+    planner = ToolPlanner()
+
+    tools = planner.available_tools()
+
+    assert isinstance(tools, list)
+    assert len(tools) > 0
+
+    print("PASS: available tools")
+
+
 def run_tests():
 
     test_calculator_detection()
     test_explicit_tool()
     test_no_tool()
+    test_available_tools()
 
     print("\nAll ToolPlanner tests passed.")
 
