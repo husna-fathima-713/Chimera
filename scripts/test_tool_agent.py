@@ -23,11 +23,11 @@ def test_calculator_execution():
     )
 
     assert result is not None
-    assert result["success"] is True
-    assert result["tool"] == "calculator"
-    assert result["input"] == "10 + 5"
-    assert result["output"] == "15"
-    assert result["confidence"] == 0.9
+    assert result.success is True
+    assert result.tool == "calculator"
+    assert result.input == "10 + 5"
+    assert result.output == "15"
+    assert result.confidence == 0.9
 
     print("PASS: calculator execution")
 
@@ -41,11 +41,11 @@ def test_explicit_tool():
     )
 
     assert result is not None
-    assert result["success"] is True
-    assert result["tool"] == "calculator"
-    assert result["input"] == "10 + 5"
-    assert result["output"] == "15"
-    assert result["confidence"] == 1.0
+    assert result.success is True
+    assert result.tool == "calculator"
+    assert result.input == "10 + 5"
+    assert result.output == "15"
+    assert result.confidence == 1.0
 
     print("PASS: explicit tool detection")
 

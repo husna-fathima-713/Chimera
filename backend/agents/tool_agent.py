@@ -1,5 +1,6 @@
 from datetime import datetime, timezone
 
+from backend.agents.agent_result import AgentResult
 from backend.agents.tool_planner import ToolPlanner
 from backend.tools.executor import ToolExecutor
 
@@ -26,12 +27,18 @@ class ToolAgent:
             plan["input"]
         )
 
-        result["reason"] = plan["reason"]
-        result["confidence"] = plan["confidence"]
+        agent_result = AgentResult(
+            success=result["success"],
+            tool=result["tool"],
+            input=result["input"],
+            output=result["output"],
+            reason=plan["reason"],
+            confidence=plan["confidence"]
+        )
 
-        self._log_result(result)
+        self._log_result(agent_result)
 
-        return result
+        return agent_result
 
     def available_tools(self):
 
@@ -45,15 +52,15 @@ class ToolAgent:
 
         status = (
             "SUCCESS"
-            if result["success"]
+            if result.success
             else "FAILED"
         )
 
         print(
             f"[TOOL {status}] "
             f"{timestamp} | "
-            f"{result['tool']} | "
-            f"input={result['input']!r} | "
-            f"output={result['output']!r} | "
-            f"confidence={result.get('confidence')}"
+            f"{result.tool} | "
+            f"input={result.input!r} | "
+            f"output={result.output!r} | "
+            f"confidence={result.confidence}"
         )
