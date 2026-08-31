@@ -37,11 +37,15 @@ def test_explicit_tool():
     agent = ToolAgent()
 
     result = agent.process(
-        "calculator"
+        "Use calculator to calculate 10 + 5"
     )
 
     assert result is not None
+    assert result["success"] is True
     assert result["tool"] == "calculator"
+    assert result["input"] == "10 + 5"
+    assert result["output"] == "15"
+    assert result["confidence"] == 1.0
 
     print("PASS: explicit tool detection")
 
@@ -54,11 +58,9 @@ def test_unknown_tool():
         "Use does_not_exist tool"
     )
 
-    assert result is not None
-    assert result["success"] is False
-    assert result["tool"] == "does_not_exist"
+    assert result is None
 
-    print("PASS: unknown tool")
+    print("PASS: unknown tool ignored")
 
 
 def run_tests():

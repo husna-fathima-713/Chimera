@@ -16,19 +16,29 @@ class ToolPlanner:
 
         tools = self.selector.available_tools()
 
-        for tool in tools:
+        # Explicit calculator request
+        if "calculator" in prompt_lower:
 
-            name = tool["name"].lower()
+            calculator = self.selector.select(
+                "calculator"
+            )
 
-            if name in prompt_lower:
+            if calculator:
 
-                return {
-                    "tool": tool["name"],
-                    "input": prompt.strip(),
-                    "reason": "Tool name explicitly mentioned.",
-                    "confidence": 1.0
-                }
+                calculation = self._extract_calculation(
+                    prompt
+                )
 
+                if calculation:
+
+                    return {
+                        "tool": "calculator",
+                        "input": calculation,
+                        "reason": "Calculator tool explicitly requested.",
+                        "confidence": 1.0
+                    }
+
+        # Natural calculation
         if self._looks_like_calculation(prompt):
 
             calculator = self.selector.select(
@@ -57,8 +67,14 @@ class ToolPlanner:
         )
 
         return (
-            any(operator in prompt for operator in operators)
-            and any(char.isdigit() for char in prompt)
+            any(
+                operator in prompt
+                for operator in operators
+            )
+            and any(
+                char.isdigit()
+                for char in prompt
+            )
         )
 
     def _extract_calculation(self, prompt):
@@ -72,6 +88,7 @@ class ToolPlanner:
                 or char in "+-*/().%"
                 or char.isspace()
             ):
+
                 expression += char
 
         return expression.strip()
