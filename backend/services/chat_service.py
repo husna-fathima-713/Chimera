@@ -3,7 +3,7 @@ from backend.services.chat_manager import ChatManager
 from backend.services.memory_manager import MemoryManager
 from backend.rag.retriever import Retriever
 from backend.tools.registry import ToolRegistry
-from backend.agents.tool_agent import ToolAgent
+from backend.agents.agent_loop import AgentLoop
 
 
 class ChatService:
@@ -15,7 +15,7 @@ class ChatService:
         self.memory_manager = MemoryManager()
         self.retriever = Retriever()
         self.tool_registry = ToolRegistry()
-        self.tool_agent = ToolAgent()
+        self.agent_loop = AgentLoop()
 
     def create_chat(self, title="New Chat"):
 
@@ -39,8 +39,14 @@ class ChatService:
             chat_id
         )
 
-        tool_result = self.tool_agent.process(
+        agent_results = self.agent_loop.run(
             prompt
+        )
+
+        tool_result = (
+            agent_results[-1]
+            if agent_results
+            else None
         )
 
         memories = self.memory_manager.retrieve(
