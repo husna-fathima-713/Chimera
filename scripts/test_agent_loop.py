@@ -22,7 +22,7 @@ def test_calculator():
         "Calculate 10 + 5"
     )
 
-    assert len(results) == 1
+    assert len(results) >= 1
 
     result = results[0]
 
@@ -42,7 +42,7 @@ def test_explicit_calculator():
         "Use calculator to calculate 20 + 5"
     )
 
-    assert len(results) == 1
+    assert len(results) >= 1
 
     result = results[0]
 
@@ -54,11 +54,21 @@ def test_explicit_calculator():
     print("PASS: explicit calculator")
 
 
+def test_iteration_limit():
+
+    agent = AgentLoop()
+
+    assert agent.MAX_ITERATIONS == 3
+
+    print("PASS: iteration limit")
+
+
 def run_tests():
 
     test_no_tool()
     test_calculator()
     test_explicit_calculator()
+    test_iteration_limit()
 
     print("\nAll AgentLoop tests passed.")
 

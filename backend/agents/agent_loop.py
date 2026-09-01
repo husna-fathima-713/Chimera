@@ -18,7 +18,9 @@ class AgentLoop:
 
         current_prompt = prompt
 
-        for _ in range(self.MAX_ITERATIONS):
+        for iteration in range(
+            self.MAX_ITERATIONS
+        ):
 
             result = self.tool_agent.process(
                 current_prompt
@@ -32,10 +34,27 @@ class AgentLoop:
             if not result.success:
                 break
 
-            # The current tool architecture is
-            # single-step. Stop after a successful
-            # execution until multi-step planning
-            # is implemented.
-            break
+            current_prompt = self._build_next_prompt(
+                prompt,
+                results
+            )
 
         return results
+
+    def _build_next_prompt(
+        self,
+        original_prompt,
+        results
+    ):
+
+        latest = results[-1]
+
+        return (
+            f"{original_prompt}\n\n"
+            f"Previous tool result:\n"
+            f"Tool: {latest.tool}\n"
+            f"Input: {latest.input}\n"
+            f"Output: {latest.output}\n\n"
+            "Determine whether another tool "
+            "execution is required."
+        )
