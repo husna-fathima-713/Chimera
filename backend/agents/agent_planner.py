@@ -53,13 +53,9 @@ class AgentPlanner:
             }
         )
 
-        response = ""
-
-        for chunk in self.model.stream(
+        response = self.model.generate(
             messages
-        ):
-
-            response += chunk
+        )
 
         return self._parse_response(
             response

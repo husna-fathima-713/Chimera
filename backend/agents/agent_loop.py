@@ -1,4 +1,6 @@
-from backend.agents.tool_agent import ToolAgent
+from backend.agents.agent_planner import AgentPlanner
+from backend.agents.agent_result import AgentResult
+from backend.tools.executor import ToolExecutor
 
 
 class AgentLoop:
@@ -7,7 +9,8 @@ class AgentLoop:
 
     def __init__(self):
 
-        self.tool_agent = ToolAgent()
+        self.planner = AgentPlanner()
+        self.executor = ToolExecutor()
 
     def run(self, prompt):
 
@@ -15,46 +18,50 @@ class AgentLoop:
             return []
 
         results = []
+        history = []
 
-        current_prompt = prompt
+        for _ in range(self.MAX_ITERATIONS):
 
-        for iteration in range(
-            self.MAX_ITERATIONS
-        ):
-
-            result = self.tool_agent.process(
-                current_prompt
-            )
-
-            if result is None:
-                break
-
-            results.append(result)
-
-            if not result.success:
-                break
-
-            current_prompt = self._build_next_prompt(
+            plan = self.planner.plan(
                 prompt,
-                results
+                self.executor.list_tools(),
+                history
             )
+
+            if plan is None:
+                break
+
+            if plan["tool"] is None:
+                break
+
+            result = self.executor.execute(
+                plan["tool"],
+                plan["input"]
+            )
+
+            agent_result = AgentResult(
+                success=result["success"],
+                tool=result["tool"],
+                input=result["input"],
+                output=result["output"],
+                reason="LLM-selected tool execution.",
+                confidence=1.0
+            )
+
+            results.append(agent_result)
+
+            history.append(
+                {
+                    "role": "assistant",
+                    "content": (
+                        f"Tool: {agent_result.tool}\n"
+                        f"Input: {agent_result.input}\n"
+                        f"Output: {agent_result.output}"
+                    )
+                }
+            )
+
+            if not agent_result.success:
+                break
 
         return results
-
-    def _build_next_prompt(
-        self,
-        original_prompt,
-        results
-    ):
-
-        latest = results[-1]
-
-        return (
-            f"{original_prompt}\n\n"
-            f"Previous tool result:\n"
-            f"Tool: {latest.tool}\n"
-            f"Input: {latest.input}\n"
-            f"Output: {latest.output}\n\n"
-            "Determine whether another tool "
-            "execution is required."
-        )
