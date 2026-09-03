@@ -5,7 +5,7 @@ from backend.tools.executor import ToolExecutor
 
 class AgentLoop:
 
-    MAX_ITERATIONS = 3
+    MAX_ITERATIONS = 4
 
     def __init__(self):
 
