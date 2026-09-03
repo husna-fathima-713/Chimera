@@ -1,0 +1,11 @@
+[
+  {
+    "timestamp": "2026-09-03T09:31:10.644089+00:00",
+    "metrics": {
+      "records_processed": 101,
+      "matched": 89,
+      "exceptions": 12,
+      "match_rate": 88.12
+    }
+  }
+]
