@@ -44,7 +44,7 @@ function ChatList({
 
             const data = await getChats();
 
-            setChats(data);
+            setChats(data.slice(-5));
 
             // Automatically open the newest chat
             if (
