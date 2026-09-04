@@ -155,8 +155,9 @@ def _inject_anomalies(
     settlements[19]["status"] = "MISSING"
 
     # 3. Duplicate transaction
+    # Keep the same transaction ID so the reconciliation engine
+    # can detect a true duplicate.
     duplicate_transaction = transactions[29].copy()
-    duplicate_transaction["transaction_id"] = "TXN-DUP-0030"
     transactions.append(duplicate_transaction)
 
     # 4. Delayed settlement
@@ -170,6 +171,10 @@ def _inject_anomalies(
     invoices[59]["invoice_amount"] += 250
 
     # 7. Unknown transaction
+    # Change both the transaction and settlement IDs so the
+    # records reconcile with each other but remain unknown
+    # to the normal transaction ID pattern.
+    transactions[69]["transaction_id"] = "TXN-UNKNOWN-0070"
     settlements[69]["transaction_id"] = "TXN-UNKNOWN-0070"
 
     # 8. Partial settlement
