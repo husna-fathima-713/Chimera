@@ -8,12 +8,10 @@ import {
 } from "../services/chatListService";
 
 function ChatList({
-
     chatId,
     setChatId,
     setMessages,
     refreshChats
-
 }) {
 
     const [chats, setChats] = useState([]);
@@ -26,11 +24,9 @@ function ChatList({
 
             setChatId(chat.id);
 
-            setMessages(data.messages);
+            setMessages(data.messages || []);
 
-        }
-
-        catch (error) {
+        } catch (error) {
 
             console.error(error);
 
@@ -44,23 +40,60 @@ function ChatList({
 
             const data = await getChats();
 
-            setChats(data.slice(-5));
+            const validChats = [];
 
-            // Automatically open the newest chat
-            if (
-                data.length > 0 &&
-                !chatId
-            ) {
+            for (const chat of data) {
 
-                selectChat(data[0]);
+                try {
+
+                    const fullChat = await getChat(chat.id);
+
+                    if (
+                        fullChat.messages &&
+                        fullChat.messages.length > 0
+                    ) {
+                        validChats.push(chat);
+                    }
+
+                } catch (error) {
+
+                    console.error(error);
+
+                }
 
             }
 
-        }
+            const recentChats = validChats.slice(-5);
 
-        catch (error) {
+            setChats(recentChats);
+
+            if (
+                recentChats.length > 0 &&
+                !chatId
+            ) {
+
+                selectChat(recentChats[recentChats.length - 1]);
+
+            }
+
+        } catch (error) {
 
             console.error(error);
+
+        }
+
+    }
+
+    function handleDelete(deletedChatId) {
+
+        setChats(prev =>
+            prev.filter(chat => chat.id !== deletedChatId)
+        );
+
+        if (deletedChatId === chatId) {
+
+            setChatId(null);
+            setMessages([]);
 
         }
 
@@ -80,25 +113,17 @@ function ChatList({
             }}
         >
 
-            {
+            {chats.map(chat => (
 
-                chats.map(chat => (
+                <ChatItem
+                    key={chat.id}
+                    chat={chat}
+                    active={chat.id === chatId}
+                    onClick={() => selectChat(chat)}
+                    onDelete={handleDelete}
+                />
 
-                    <ChatItem
-
-                        key={chat.id}
-
-                        chat={chat}
-
-                        active={chat.id === chatId}
-
-                        onClick={() => selectChat(chat)}
-
-                    />
-
-                ))
-
-            }
+            ))}
 
         </div>
 

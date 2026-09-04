@@ -15,6 +15,10 @@
         {
             "role": "assistant",
             "content": "2 + 8 = 10"
+        },
+        {
+            "role": "user",
+            "content": "h"
         }
     ]
 }

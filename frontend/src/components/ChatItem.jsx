@@ -1,18 +1,54 @@
-function ChatItem({ chat, active, onClick }) {
+function ChatItem({
+    chat,
+    active,
+    onClick,
+    onDelete
+}) {
+
+    async function handleDelete(event) {
+
+        event.stopPropagation();
+
+        const confirmed = window.confirm(
+            "Delete this chat? This cannot be undone."
+        );
+
+        if (!confirmed) return;
+
+        try {
+
+            await import("../services/chatListService")
+                .then(({ deleteChat }) => deleteChat(chat.id));
+
+            onDelete(chat.id);
+
+        } catch (error) {
+
+            console.error(error);
+
+        }
+
+    }
 
     return (
 
         <div
+            className={`chat-item ${active ? "active" : ""}`}
             onClick={onClick}
-            style={{
-                padding: "12px",
-                marginBottom: "8px",
-                borderRadius: "8px",
-                background: active ? "#343541" : "transparent",
-                cursor: "pointer"
-            }}
         >
-            {chat.title}
+
+            <span className="chat-title">
+                {chat.title || "New Chat"}
+            </span>
+
+            <button
+                className="delete-chat-button"
+                onClick={handleDelete}
+                title="Delete chat"
+            >
+                ×
+            </button>
+
         </div>
 
     );

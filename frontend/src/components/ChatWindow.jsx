@@ -14,66 +14,38 @@ function ChatWindow({ messages, loading }) {
 
     return (
 
-        <div>
+        <div className="chat-messages">
 
-            {
+            {messages.map((msg, index) => (
 
-                messages.map((msg, index) => (
+                <div
+                    key={index}
+                    className={
+                        msg.role === "User"
+                            ? "chat-message user-message"
+                            : "chat-message assistant-message"
+                    }
+                >
 
-                    <div
-
-                        key={index}
-
-                        style={{
-                            marginBottom: "20px",
-                            padding: "12px",
-                            borderRadius: "8px",
-                            background:
-                                msg.role === "User"
-                                    ? "#2d3748"
-                                    : "#1f2937",
-                        }}
-
-                    >
-
-                        <strong>{msg.role}</strong>
-
-                        <p
-                            style={{
-                                marginTop: "8px",
-                                whiteSpace: "pre-wrap",
-                            }}
-                        >
-                            {msg.content}
-                        </p>
-
+                    <div className="message-role">
+                        {msg.role === "User" ? "You" : "Chimera"}
                     </div>
 
-                ))
+                    <p className="message-content">
+                        {msg.content}
+                    </p>
 
-            }
+                </div>
 
-            {
+            ))}
 
-                loading && (
+            {loading && (
 
-                    <div
+                <div className="chat-thinking">
+                    Chimera is thinking...
+                </div>
 
-                        style={{
-                            padding: "12px",
-                            color: "#999",
-                            fontStyle: "italic",
-                        }}
-
-                    >
-
-                        Chimera is thinking...
-
-                    </div>
-
-                )
-
-            }
+            )}
 
             <div ref={bottomRef} />
 

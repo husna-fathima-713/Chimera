@@ -8,31 +8,49 @@ function MessageInput({ onSend }) {
 
         if (!message.trim()) return;
 
-        console.log("Sending:", message);
-
         onSend(message);
 
         setMessage("");
+
+    }
+
+    function handleKeyDown(event) {
+
+        if (event.key === "Enter" && !event.shiftKey) {
+
+            event.preventDefault();
+
+            handleSend();
+
+        }
+
     }
 
     return (
-        <div style={{ display: "flex", gap: "10px" }}>
+
+        <div className="message-input-container">
+
             <input
+                className="message-input-field"
                 type="text"
-                placeholder="Type a message..."
+                placeholder="Message Chimera..."
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                style={{
-                    flex: 1,
-                    padding: "12px"
-                }}
+                onKeyDown={handleKeyDown}
             />
 
-            <button onClick={handleSend}>
+            <button
+                className="send-button"
+                onClick={handleSend}
+                disabled={!message.trim()}
+            >
                 Send
             </button>
+
         </div>
+
     );
+
 }
 
 export default MessageInput;

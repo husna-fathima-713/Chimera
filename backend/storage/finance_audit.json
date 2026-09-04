@@ -67,5 +67,35 @@
       "reconciled_value": 175250.0,
       "exception_value": 31250.0
     }
+  },
+  {
+    "timestamp": "2026-09-04T18:11:23.126531+00:00",
+    "metrics": {
+      "records_received": 101,
+      "records_processed": 101,
+      "matched": 88,
+      "exceptions": 13,
+      "match_rate": 87.13,
+      "automatically_resolved": 1,
+      "unresolved": 12,
+      "total_transaction_value": 206500.0,
+      "reconciled_value": 175250.0,
+      "exception_value": 31250.0
+    }
+  },
+  {
+    "timestamp": "2026-09-04T18:23:14.298120+00:00",
+    "metrics": {
+      "records_received": 101,
+      "records_processed": 101,
+      "matched": 88,
+      "exceptions": 13,
+      "match_rate": 87.13,
+      "automatically_resolved": 1,
+      "unresolved": 12,
+      "total_transaction_value": 206500.0,
+      "reconciled_value": 175250.0,
+      "exception_value": 31250.0
+    }
   }
 ]
