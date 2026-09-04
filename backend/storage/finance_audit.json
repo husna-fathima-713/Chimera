@@ -7,5 +7,35 @@
       "exceptions": 12,
       "match_rate": 88.12
     }
+  },
+  {
+    "timestamp": "2026-09-04T16:38:51.565744+00:00",
+    "metrics": {
+      "records_received": 101,
+      "records_processed": 101,
+      "matched": 89,
+      "exceptions": 12,
+      "match_rate": 88.12,
+      "automatically_resolved": 1,
+      "unresolved": 11,
+      "total_transaction_value": 206500.0,
+      "reconciled_value": 177250.0,
+      "exception_value": 29250.0
+    }
+  },
+  {
+    "timestamp": "2026-09-04T16:39:21.467932+00:00",
+    "metrics": {
+      "records_received": 101,
+      "records_processed": 101,
+      "matched": 89,
+      "exceptions": 12,
+      "match_rate": 88.12,
+      "automatically_resolved": 1,
+      "unresolved": 11,
+      "total_transaction_value": 206500.0,
+      "reconciled_value": 177250.0,
+      "exception_value": 29250.0
+    }
   }
 ]
