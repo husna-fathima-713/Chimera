@@ -60,7 +60,7 @@ Synthetic Financial Data
           v
       Dashboard
 ```
-Current Results
+# Current Results
 
 The finance controller currently processes 101 financial records.
 
@@ -80,7 +80,7 @@ The finance controller currently processes 101 financial records.
 
 The synthetic dataset intentionally contains multiple anomaly types so that the reconciliation engine can demonstrate both successful matches and exception handling.
 
-Detected Exceptions
+# Detected Exceptions
 
 The reconciliation engine checks for:
 
@@ -105,7 +105,7 @@ Status
 Detected issue
 Related financial records
 
-AI Exception Analysis
+# AI Exception Analysis
 
 Financial arithmetic and reconciliation decisions are handled deterministically.
 
@@ -133,7 +133,7 @@ Process settlement.
 ```
 This separation prevents the LLM from being responsible for financial arithmetic while still using AI where reasoning and explanation are useful.
 
-Finance Tools
+# Finance Tools
 
 The finance workflow exposes dedicated tools through Chimera's existing tool architecture.
 ```
@@ -155,7 +155,7 @@ Calculates reconciliation and operational metrics.
 
 These tools are registered through Chimera's existing tool registry and can be used by the agent workflow.
 
-Reconciliation Logic
+# Reconciliation Logic
 
 Each transaction is checked against the available financial records.
 ```
@@ -182,7 +182,7 @@ A transaction contains malformed data
 A settlement is delayed
 A payout is inconsistent
 
-Deterministic Finance Layer
+# Deterministic Finance Layer
 
 The finance controller deliberately keeps critical financial operations deterministic.
 
@@ -199,7 +199,7 @@ Audit logging
 
 This makes the reconciliation results predictable and reproducible.
 
-AI Reasoning Layer
+# AI Reasoning Layer
 
 The AI layer is responsible for tasks where language-model reasoning is useful.
 
@@ -213,7 +213,7 @@ Tool orchestration
 
 The LLM therefore complements the finance engine instead of replacing it.
 
-Audit Logging
+# Audit Logging
 
 Each reconciliation run records an audit entry containing the generated metrics.
 
@@ -223,7 +223,7 @@ backend/storage/finance_audit.json
 ```
 This provides a persistent history of reconciliation runs without requiring an external database.
 
-Finance Dashboard
+# Finance Dashboard
 
 The React dashboard provides:
 
@@ -244,7 +244,7 @@ The dashboard communicates with the FastAPI backend through:
 POST /finance/reconcile
 ```
 
-Architecture
+# Architecture
 ```
                          CHIMERA
                             |
@@ -270,7 +270,7 @@ Architecture
                             v
                     React Dashboard
 ```
-Project Structure
+# Project Structure
 ```
 Chimera/
 │
@@ -331,9 +331,9 @@ Chimera/
 ├── requirements.txt
 └── README.md
 ```
-Technology Stack
+# Technology Stack
 
-Backend
+## Backend
 Python
 FastAPI
 Ollama
@@ -342,25 +342,26 @@ FAISS
 Sentence Transformers
 JSON-based local storage
 
-Frontend
+## Frontend
 React
 Vite
 JavaScript
 CSS
 
-AI
+## AI
 Local LLM inference through Ollama
 Agent planning
 Tool execution
 Exception explanation
 
-Storage
+## Storage
 JSON
 FAISS vector database
 Local filesystem
 
 
-Running Chimera
+# Running Chimera
+
 1. Clone the Repository
 ```
 git clone https://github.com/husna-fathima-713/Chimera.git
@@ -386,9 +387,9 @@ ollama list
 5. Start the Backend
 
 From the project root:
-
+```
 python -m uvicorn backend.main:app --reload
-
+```
 The backend runs at:
 ```
 http://127.0.0.1:8000
@@ -406,7 +407,7 @@ The frontend normally runs at:
 ```
 http://localhost:5173
 ```
-Finance API
+# Finance API
 
 Reconcile Financial Batch
 ```
@@ -427,7 +428,7 @@ The response contains:
 
 The actual response contains the calculated reconciliation metrics and the detected exceptions.
 
-Testing
+# Testing
 
 The deterministic reconciliation engine can be tested without running the LLM.
 
@@ -435,7 +436,7 @@ From the project root:
 ```
 python -m scripts.test_finance_engine
 ```
-Expected output:
+# Expected output:
 
 Finance reconciliation engine test passed.
 ```
@@ -468,29 +469,29 @@ The agent is instructed not to repeat tools that have already completed successf
 
 The finance controller itself remains deterministic, while the agent layer provides orchestration and AI-assisted reasoning.
 
-Failure Handling
+# Failure Handling
 
 Several implementation issues were identified and corrected during development.
 
-Duplicate Detection
+## Duplicate Detection
 
 The initial synthetic duplicate anomaly did not actually create a duplicate transaction.
 
 The dataset was corrected so that a transaction record is genuinely duplicated and the reconciliation engine detects both occurrences.
 
-Unknown Transaction Detection
+## Unknown Transaction Detection
 
 The original unknown transaction anomaly did not create a detectable cross-record condition.
 
 The dataset was corrected so that the reconciliation engine can explicitly identify the unknown transaction.
 
-Agent Iteration
+## Agent Iteration
 
 The initial agent loop had a low iteration limit for multi-step workflows.
 
 The iteration limit was increased so the finance workflow can execute multiple tool steps.
 
-Excessive LLM Usage
+## Excessive LLM Usage
 
 The initial finance design attempted to use the LLM for every exception.
 
@@ -508,13 +509,13 @@ Deterministic Reconciliation
 ```
 This reduced unnecessary model usage and keeps financial calculations deterministic.
 
-Frontend Integration
+## Frontend Integration
 
 The initial frontend integration did not immediately display the new Finance Controller navigation and dashboard.
 
 The React application routing and dashboard integration were corrected and verified.
 
-Why This Architecture
+# Why This Architecture
 
 A finance controller should not ask a language model to decide whether:
 ```
@@ -544,7 +545,8 @@ Therefore, Chimera separates financial computation from AI reasoning.
         Validation                Actions
         Metrics                   Planning
         Audit
-Limitations
+        
+# Limitations
 
 This implementation currently uses synthetic financial data.
 
@@ -559,7 +561,7 @@ The reconciliation rules are designed for a buildathon prototype and would requi
 
 The current audit storage also uses local JSON rather than a production database.
 
-Future Improvements
+# Future Improvements
 
 Potential production extensions include:
 
@@ -629,13 +631,11 @@ The goal is not to replace deterministic financial systems with an LLM.
 
 The goal is to combine reliable financial computation with AI reasoning where it provides practical value.
 
-Repository
+# Repository
 
 GitHub:
 ```
 https://github.com/husna-fathima-713/Chimera
 ```
-License
-This project is open source and intended for educational, research, and prototype development.
-
+# License
 This project is open source and intended for educational, research, and prototype development.
