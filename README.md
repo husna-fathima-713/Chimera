@@ -1,4 +1,4 @@
-ø# Chimera
+# Chimera
 
 Chimera is an open-source AI platform built to give developers, researchers, and engineers complete control over their AI assistant. Instead of relying on closed ecosystems, Chimera combines powerful local language models with long-term memory, Retrieval-Augmented Generation (RAG), tool execution, and autonomous agents in a single extensible architecture.
 
