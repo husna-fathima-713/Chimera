@@ -7,6 +7,7 @@ import {
     getChat,
 } from "../services/chatListService";
 
+
 function ChatList({
     chatId,
     setChatId,
@@ -15,6 +16,7 @@ function ChatList({
 }) {
 
     const [chats, setChats] = useState([]);
+
 
     async function selectChat(chat) {
 
@@ -34,6 +36,7 @@ function ChatList({
 
     }
 
+
     async function loadChats() {
 
         try {
@@ -48,10 +51,7 @@ function ChatList({
 
                     const fullChat = await getChat(chat.id);
 
-                    if (
-                        fullChat.messages &&
-                        fullChat.messages.length > 0
-                    ) {
+                    if (fullChat) {
                         validChats.push(chat);
                     }
 
@@ -67,12 +67,15 @@ function ChatList({
 
             setChats(recentChats);
 
+
             if (
                 recentChats.length > 0 &&
                 !chatId
             ) {
 
-                selectChat(recentChats[recentChats.length - 1]);
+                selectChat(
+                    recentChats[recentChats.length - 1]
+                );
 
             }
 
@@ -84,11 +87,13 @@ function ChatList({
 
     }
 
+
     function handleDelete(deletedChatId) {
 
         setChats(prev =>
             prev.filter(chat => chat.id !== deletedChatId)
         );
+
 
         if (deletedChatId === chatId) {
 
@@ -99,11 +104,13 @@ function ChatList({
 
     }
 
+
     useEffect(() => {
 
         loadChats();
 
     }, [refreshChats]);
+
 
     return (
 
@@ -130,5 +137,6 @@ function ChatList({
     );
 
 }
+
 
 export default ChatList;
