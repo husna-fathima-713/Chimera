@@ -82,6 +82,32 @@ class ChatManager:
 
             file_path.unlink()
 
+    def rename_chat(self, chat_id, new_title):
+
+        chat = self.load_chat(chat_id)
+
+        if chat is None:
+            return None
+
+        new_title = new_title.strip()
+
+        if not new_title:
+            return None
+
+        chat["chat"]["title"] = new_title
+
+        file_path = self.STORAGE_PATH / f"{chat_id}.json"
+
+        with open(file_path, "w", encoding="utf-8") as file:
+
+            json.dump(
+                chat,
+                file,
+                indent=4
+            )
+
+        return chat["chat"]
+
     def add_message(self, chat_id, role, content):
 
         chat = self.load_chat(chat_id)
