@@ -1,5 +1,6 @@
 import api from "../api/api";
 
+
 export async function createChat() {
 
     const response = await api.post("/chats");
@@ -7,6 +8,7 @@ export async function createChat() {
     return response.data;
 
 }
+
 
 export async function getChats() {
 
@@ -16,6 +18,7 @@ export async function getChats() {
 
 }
 
+
 export async function getChat(chatId) {
 
     const response = await api.get(`/chats/${chatId}`);
@@ -23,6 +26,21 @@ export async function getChat(chatId) {
     return response.data;
 
 }
+
+
+export async function renameChat(chatId, title) {
+
+    const response = await api.put(
+        `/chats/${chatId}/rename`,
+        {
+            title: title
+        }
+    );
+
+    return response.data;
+
+}
+
 
 export async function deleteChat(chatId) {
 
